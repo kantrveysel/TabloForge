@@ -48,7 +48,7 @@
       <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Player Count" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
         <summary class="cursor-pointer">📄 JSON Content</summary>
-        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2 overflow-x-auto whitespace-pre-wrap text-gray-300">
 {
   "rows": [
     [{"text": "Server", "color": "#4c1"}, {"text": "Players", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
@@ -66,7 +66,7 @@
       <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true" alt="Server Status" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
         <summary class="cursor-pointer">📄 JSON Content</summary>
-        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2 overflow-x-auto whitespace-pre-wrap text-gray-300">
 {
   "rows": [
     [{"text": "Name", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
@@ -84,7 +84,7 @@
       <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" alt="Event Announcement" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
         <summary class="cursor-pointer">📄 JSON Content</summary>
-        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2 overflow-x-auto whitespace-pre-wrap text-gray-300">
 {
   "rows": [
     [{"text": "Event", "color": "#60a5fa"}, {"text": "Date", "color": "#60a5fa"}, {"text": "Status", "color": "#60a5fa"}],
@@ -119,126 +119,8 @@ https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob
         <p class="mt-4 text-gray-300">
           Create a JSON file with a <code>rows</code> array containing your table data. Example:
         </p>
-        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
+        <pre class="bg-gray-900 p-4 rounded-lg mt-4 overflow-x-auto whitespace-pre-wrap text-gray-300">
 {
   "rows": [
     [{"text": "Header 1", "color": "#4c1"}, {"text": "Header 2", "color": "#4c1"}],
-    [{"text": "Data 1", "icon": "success", "color": "transparent"}, {"text": "Data 2", "icon": "check", "color": "transparent"}]
-  ]
-}
-        </pre>
-      </details>
-
-      <!-- Step 2: Upload and Use -->
-      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">2. Upload and Use</summary>
-        <p class="mt-4 text-gray-300">
-          Upload your JSON to a public URL (e.g., GitHub, Vercel), then use it in the TabloForge URL:
-        </p>
-        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
-https://tablo-forge.vercel.app/api/table?json=https://your-site.com/my-table.json&_canvas=600x200&_theme=dark
-        </pre>
-      </details>
-
-      <!-- Step 3: Use Query Parameters (Non-JSON) -->
-      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-800">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">3. Use Query Parameters</summary>
-        <p class="mt-4 text-gray-300">
-          Create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
-        </p>
-        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
-https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
-        </pre>
-      </details>
-    </div>
-  </section>
-
-  <!-- Supported Icons Section -->
-  <section class="max-w-5xl mx-auto py-16 px-4">
-    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🎨 Supported Icons</h2>
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-gray-300">
-        <thead>
-          <tr class="bg-gray-800">
-            <th class="p-4">Name</th>
-            <th class="p-4">Appearance</th>
-            <th class="p-4">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>success</code></td>
-            <td class="p-4">✅</td>
-            <td class="p-4">Success / active status</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>error</code></td>
-            <td class="p-4">❌</td>
-            <td class="p-4">Error / failed operation</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>warning</code></td>
-            <td class="p-4">⚠️</td>
-            <td class="p-4">Warning</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>info</code></td>
-            <td class="p-4">ℹ️</td>
-            <td class="p-4">Information</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>check</code></td>
-            <td class="p-4">✔️</td>
-            <td class="p-4">Approved content</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>offline</code></td>
-            <td class="p-4">🔴</td>
-            <td class="p-4">Offline</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>online</code></td>
-            <td class="p-4">🟢</td>
-            <td class="p-4">Online</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>star</code></td>
-            <td class="p-4">⭐</td>
-            <td class="p-4">Featured content</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>fire</code></td>
-            <td class="p-4">🔥</td>
-            <td class="p-4">Popular / hot</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>clock</code></td>
-            <td class="p-4">🕒</td>
-            <td class="p-4">Time info / event</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>green dot</code></td>
-            <td class="p-4">🟢</td>
-            <td class="p-4">Available user</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>red dot</code></td>
-            <td class="p-4">🔴</td>
-            <td class="p-4">Busy / offline user</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="mt-4 text-gray-300 text-center">Suggest new icons on <a href="https://github.com/veyselfirat/tabloforge/issues" class="text-green-400 hover:underline">GitHub</a>!</p>
-  </section>
-
-  <!-- Footer Section -->
-  <footer class="text-center py-8 bg-gray-900">
-    <p class="text-gray-400">
-      Developed by <strong>Kantrveysel</strong> •
-      <a href="https://github.com/veyselfirat" class="text-green-400 hover:underline">GitHub</a> •
-      <a href="https://tablo-forge.vercel.app" class="text-green-400 hover:underline">TabloForge</a>
-    </p>
-  </footer>
-</body>
-</html>
+    [{"text": "Data 1", "icon": "
