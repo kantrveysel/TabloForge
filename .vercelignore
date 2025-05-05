@@ -1,0 +1,43 @@
+# Dokümantasyon dosyaları
+README.md
+CHANGELOG.md
+LICENSE
+CONTRIBUTING.md
+
+# IDE ve editör dosyaları
+.vscode/
+.idea/
+*.code-workspace
+
+# Log dosyaları
+*.log
+
+# Test ve örnek dosyalar
+tests/
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+
+# Konfigürasyonlar
+.env
+.env.local
+.env.*.local
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# Node.js build & cache
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.next/
+dist/
+build/
+out/
+
+# Diğer geçici dosyalar
+tmp/
+temp/
