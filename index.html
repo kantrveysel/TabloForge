@@ -2,10 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>TabloForge</title>
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <canvas id="tableCanvas" width="200" height="100"></canvas>
@@ -158,13 +168,11 @@
           });
         });
 
-        // Output PNG binary
+        // Convert canvas to PNG blob and serve it
         canvas.toBlob(blob => {
-          blob.arrayBuffer().then(buffer => {
-            const array = new Uint8Array(buffer);
-            const binary = String.fromCharCode.apply(null, array);
-            document.write(binary);
-          });
+          const url = URL.createObjectURL(blob);
+          document.body.innerHTML = '';
+          window.location = url; // Blob URL’sini tarayıcıya sun
         }, 'image/png');
       } catch (err) {
         showError(`Draw error: ${err.message}`);
@@ -183,70 +191,49 @@
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
       console.error('Error:', message);
 
-      // Output PNG binary
+      // Serve error PNG as blob
       canvas.toBlob(blob => {
-        blob.arrayBuffer().then(buffer => {
-          const array = new Uint8Array(buffer);
-          const binary = String.fromCharCode.apply(null, array);
-          document.write(binary);
-        });
+        const url = URL.createObjectURL(blob);
+        document.body.innerHTML = '';
+        window.location = url;
       }, 'image/png');
     }
 
     // Check for data and redirect if none
     const jsonUrl = params.get('json');
-    console.log('Query params:', Array.from(params.entries()));
     const hasRows = (() => {
       let i = 1;
-      while (true) {
-        const row = params.get(`r${i}`);
-        console.log(`Checking r${i}:`, row);
-        if (!row) break;
-        if (row.trim()) return true;
-        i++;
+      while (params.get(`r${i}`)) {
+        return true;
       }
       return false;
     })();
 
-    console.log('jsonUrl:', jsonUrl, 'hasRows:', hasRows);
     if (!jsonUrl && !hasRows) {
       console.log('No data provided, redirecting to /pages/main.html');
       window.location.replace('/pages/main.html');
     } else if (jsonUrl) {
-      console.log('Fetching JSON from:', jsonUrl);
       fetch(jsonUrl, { mode: 'cors' })
         .then(res => {
-          console.log('Fetch response:', res.status, res.statusText);
           if (!res.ok) throw new Error(`Failed to fetch JSON: ${res.status} ${res.statusText}`);
           return res.json();
         })
         .then(data => {
-          console.log('Fetched data:', data);
           if (!data.rows || !Array.isArray(data.rows)) {
             throw new Error('Invalid JSON format: "rows" array required');
           }
           drawTable(data);
         })
-        .catch(err => {
-          showError(`Error: ${err.message}`);
-          console.error('Fetch error:', err);
-        });
+        .catch(err => showError(`Error: ${err.message}`));
     } else {
-      console.log('Processing query params');
       const rows = [];
       let i = 1;
       while (params.get(`r${i}`)) {
-        const row = params.get(`r${i}`);
-        console.log(`Row ${i}:`, row);
-        rows.push(row.split(','));
+        rows.push(params.get(`r${i}`).split(','));
         i++;
       }
-      console.log('Rows:', rows);
-      if (rows.length) {
-        drawTable({ rows });
-      } else {
-        showError('No valid data provided. Use ?json=URL or ?r1=Name,Score etc.');
-      }
+      if (rows.length) drawTable({ rows });
+      else showError('No data provided. Use ?json=URL or ?r1=Name,Score etc.');
     }
   </script>
 </body>
