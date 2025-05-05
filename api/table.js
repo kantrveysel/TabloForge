@@ -102,8 +102,6 @@ module.exports = async (req, res) => {
       <svg width="${canvasWidth}" height="${canvasHeight}" xmlns="http://www.w3.org/2000/svg">
         <!-- Arkaplan -->
         ${bgColor !== 'transparent' ? `<rect width="${canvasWidth}" height="${canvasHeight}" fill="${bgColor}"/>` : ''}
-        <!-- Test yazısı -->
-        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="${textColor}" font-family="sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
     `;
 
     // Tabloyu çiz
