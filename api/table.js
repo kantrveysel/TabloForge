@@ -1,9 +1,18 @@
 const { createCanvas } = require('@napi-rs/canvas');
+const path = require('path');
 
 module.exports = async (req, res) => {
   const canvas = createCanvas(300, 200); // Default size for error cases
   const ctx = canvas.getContext('2d');
-
+  ctx.font = '16px sans-serif';
+  ctx.fillStyle = textColor;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  // Set background
+  if (bgColor !== 'transparent') {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
   // Error rendering function
   function showError(message) {
     ctx.fillStyle = '#e05d44';
@@ -21,20 +30,53 @@ module.exports = async (req, res) => {
     res.send(buffer);
   }
 
+  // Register fonts
+  try {
+    console.log('Registering DejaVu Sans font:', path.join(__dirname, 'fonts', 'DejaVuSans.ttf'));
+    //registerFont(path.join(__dirname, 'fonts', 'DejaVuSans.ttf'), { family: 'DejaVu Sans' });
+    console.log('Registering Roboto font:', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
+    //registerFont(path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'), { family: 'Roboto' });
+    console.log('Registering Noto Color Emoji font:', path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'));
+    //registerFont(path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'), { family: 'Noto Color Emoji' });
+    console.log('Fonts registered successfully');
+  } catch (err) {
+    console.error('Font registration failed:', err);
+    return showError(`Font registration failed: ${err.message}`);
+  }
+
   // Parse query parameters
   const params = new URLSearchParams(req.url.split('?')[1]);
   const jsonUrl = params.get('json');
   let rows = [];
 
+  // Icon mapping
+  const iconMap = {
+    'star': '⭐',
+    'check': '✅',
+    'rocket': '🚀',
+    'heart': '❤️',
+    'fire': '🔥',
+    'user': '👤',
+    'clock': '⏰',
+    'thumb': '👍',
+    'offline': '🔴',
+    'red dot': '🔴',
+    'green dot': '🟢',
+    'waiting': '⏳'
+  };
+
   // Load data from query params or JSON
   if (jsonUrl) {
     try {
+      console.log('Fetching JSON from:', jsonUrl);
       const response = await fetch(jsonUrl);
       if (!response.ok) throw new Error(`Failed to fetch JSON: ${response.status}`);
       const data = await response.json();
       if (!data.rows || !Array.isArray(data.rows)) throw new Error('Invalid JSON: "rows" array required');
       rows = data.rows;
+      console.log('Fetched rows:', rows);
     } catch (err) {
+      console.error('JSON fetch failed:', err);
       return showError(`JSON fetch failed: ${err.message}`);
     }
   } else {
@@ -43,6 +85,7 @@ module.exports = async (req, res) => {
       rows.push(params.get(`r${i}`).split(','));
       i++;
     }
+    console.log('Query param rows:', rows);
   }
 
   if (rows.length === 0) {
@@ -60,7 +103,8 @@ module.exports = async (req, res) => {
   const headerColor = params.get('_header') || '#4c1';
   const borderColor = params.get('_border') || 'transparent';
   const textColor = decodeURIComponent(params.get('_text') || '#ffffff');
-  const fontSize = parseInt(params.get('_size') || '30') || 30;
+  const fontFamily = params.get('_font') || 'sans-serif';
+  const fontSize = parseInt(params.get('_size') || '20') || 20;
   const shadow = params.get('_shadow') === 'true';
   const radius = parseInt(params.get('_radius') || '6') || 6;
 
@@ -71,11 +115,13 @@ module.exports = async (req, res) => {
   }
 
   // Test text rendering
+  console.log('Testing text render with font:', `30px sans-serif`);
   ctx.font = '30px sans-serif';
   ctx.fillStyle = '#ff0000'; // Red for visibility
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('TEST TEXT', canvasWidth / 2, 30);
+  console.log('Test text rendered');
 
   // Calculate cell dimensions
   const rowHeight = canvasHeight / rows.length;
@@ -104,13 +150,19 @@ module.exports = async (req, res) => {
         const y = rowIndex * rowHeight;
         const isHeader = rowIndex === 0;
 
-        // Parse cell data (only text, no icons)
-        const cellText = typeof cell === 'object' ? (cell.text || cell.toString()) : cell.toString();
-        const cellBg = isHeader ? headerColor : cellColor;
+        // Parse cell data (support JSON-like objects from JSON input)
+        let cellData = typeof cell === 'object' ? cell : { text: cell };
+        const cellText = cellData.text || cell.toString();
+        const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
+        const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
-        // Set font
-        ctx.font = `${fontSize}px sans-serif`;
+        // Set font (use sans-serif as fallback)
+        const font = cellIcon ? `${fontSize}px Noto Color Emoji, sans-serif` : `${fontSize}px sans-serif`;
+        console.log(`Setting font for cell (${rowIndex}, ${colIndex}):`, font);
+        //ctx.font = font;
+        ctx.font = '16px sans-serif';
         ctx.fillStyle = textColor;
+        //ctx.fillStyle = textColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -148,11 +200,14 @@ module.exports = async (req, res) => {
           }
         }
 
-        // Draw text
-        ctx.fillText(cellText, x + colWidth / 2, y + rowHeight / 2);
+        // Draw text with icon
+        const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
+        console.log(`Rendering text for cell (${rowIndex}, ${colIndex}):`, displayText);
+        ctx.fillText(displayText, x + colWidth / 2, y + rowHeight / 2);
       });
     });
   } catch (err) {
+    console.error('Table rendering failed:', err);
     return showError(`Table rendering failed: ${err.message}`);
   }
 
