@@ -3,8 +3,11 @@ const path = require('path');
 
 // Register fonts
 try {
+  console.log('Registering Arial font:', path.join(__dirname, 'fonts', 'ARIAL.TTF'));
   registerFont(path.join(__dirname, 'fonts', 'ARIAL.TTF'), { family: 'Arial' });
+  console.log('Registering Noto Color Emoji font:', path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'));
   registerFont(path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'), { family: 'Noto Color Emoji' });
+  console.log('Fonts registered successfully');
 } catch (err) {
   console.error('Font registration failed:', err);
 }
@@ -34,11 +37,13 @@ module.exports = async (req, res) => {
   // Load data from query params or JSON
   if (jsonUrl) {
     try {
+      console.log('Fetching JSON from:', jsonUrl);
       const response = await fetch(jsonUrl);
       if (!response.ok) throw new Error(`Failed to fetch JSON: ${response.status}`);
       const data = await response.json();
       if (!data.rows || !Array.isArray(data.rows)) throw new Error('Invalid JSON: "rows" array required');
       rows = data.rows;
+      console.log('Fetched rows:', rows);
     } catch (err) {
       res.status(400).send(`Error: ${err.message}`);
       return;
@@ -49,6 +54,7 @@ module.exports = async (req, res) => {
       rows.push(params.get(`r${i}`).split(','));
       i++;
     }
+    console.log('Query param rows:', rows);
   }
 
   if (rows.length === 0) {
@@ -64,8 +70,8 @@ module.exports = async (req, res) => {
   const cellColor = params.get('_cell') || 'transparent';
   const headerColor = params.get('_header') || '#4c1';
   const borderColor = params.get('_border') || 'transparent';
-  const textColor = decodeURIComponent(params.get('_text') || '#000000');
-  const fontFamily = params.get('_font') || 'Arial';
+  const textColor = decodeURIComponent(params.get('_text') || '#ffffff');
+  const fontFamily = params.get('_font') || 'Arial, sans-serif';
   const fontSize = parseInt(params.get('_size') || '16') || 16;
   const shadow = params.get('_shadow') === 'true';
   const radius = parseInt(params.get('_radius') || '6') || 6;
@@ -78,6 +84,15 @@ module.exports = async (req, res) => {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
+
+  // Test text rendering
+  console.log('Testing text render with font:', `${fontSize}px Arial`);
+  ctx.font = `${fontSize}px Arial, sans-serif`;
+  ctx.fillStyle = textColor;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('TEST TEXT', canvasWidth / 2, canvasHeight / 2 - 20);
+  console.log('Test text rendered');
 
   // Calculate cell dimensions
   const rowHeight = canvasHeight / rows.length;
@@ -112,7 +127,9 @@ module.exports = async (req, res) => {
       const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
       // Set font (use Noto Color Emoji for icons, Arial for text)
-      ctx.font = cellIcon ? `${fontSize}px Noto Color Emoji, Arial` : `${fontSize}px Arial`;
+      const font = cellIcon ? `${fontSize}px Noto Color Emoji, Arial, sans-serif` : `${fontSize}px Arial, sans-serif`;
+      console.log(`Setting font for cell (${rowIndex}, ${colIndex}):`, font);
+      ctx.font = font;
       ctx.fillStyle = textColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -153,6 +170,7 @@ module.exports = async (req, res) => {
 
       // Draw text with icon
       const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
+      console.log(`Rendering text for cell (${rowIndex}, ${colIndex}):`, displayText);
       ctx.fillText(displayText, x + colWidth / 2, y + rowHeight / 2);
     });
   });
