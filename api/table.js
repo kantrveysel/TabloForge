@@ -12,7 +12,7 @@ try {
   });
   console.log('Noto Sans registered successfully');
 } catch (err) {
-  alert('Font registration failed:');
+  console.error('Font registration failed:', err.message, err.stack);
 }
 
 module.exports = async (req, res) => {
