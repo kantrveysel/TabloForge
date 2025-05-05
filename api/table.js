@@ -8,7 +8,10 @@ module.exports = async (req, res) => {
       'info': 'ℹ️',
       'star': '⭐',
       'check': '✔️',
-      'cross': '✖️'
+      'cross': '✖️',
+      'green dot': '🟢',
+      'red dot': '🔴',
+      'offline': '⛔'
     };
 
     // Tema seçenekleri
@@ -111,12 +114,16 @@ module.exports = async (req, res) => {
         const isHeader = rowIndex === 0;
         let cellText = '';
         let cellIcon = '';
+        let cellBg = isHeader ? headerColor : cellColor;
 
         // Hücre verisini parse et
         if (typeof cell === 'object') {
           cellText = cell.text || cell.toString();
           if (cell.icon && iconMap[cell.icon]) {
             cellIcon = iconMap[cell.icon];
+          }
+          if (cell.color) {
+            cellBg = cell.color;
           }
         } else {
           cellText = cell.toString();
@@ -127,8 +134,6 @@ module.exports = async (req, res) => {
             cellText = cellText.replace(iconMatch[0], '').trim();
           }
         }
-
-        const cellBg = isHeader ? headerColor : cellColor;
 
         // Hücre arkaplanı
         const shadowFilter = shadow ? `filter="url(#shadow)"` : '';
@@ -206,5 +211,5 @@ function escapeXml(unsafe) {
     .replace(/</g, '<')
     .replace(/>/g, '>')
     .replace(/"/g, '"')
-    .replace(/'/g, '');
+    .replace(/'/g, "'");
 }
