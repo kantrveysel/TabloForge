@@ -11,19 +11,22 @@
   <style>
     body {
       margin: 0;
+      background: transparent;
     }
     canvas {
-      display: block;
+      display: none; /* Canvas'ı gizle, sadece PNG göster */
     }
   </style>
 </head>
 <body>
   <canvas id="tableCanvas" width="200" height="100"></canvas>
+  <img id="pngOutput" alt="Table" />
 
   <script>
     const params = new URLSearchParams(location.search);
     const canvas = document.getElementById('tableCanvas');
     const ctx = canvas.getContext('2d');
+    const pngOutput = document.getElementById('pngOutput');
 
     // Unicode icon mapping
     const iconMap = {
@@ -158,11 +161,8 @@
         });
       });
 
-      // Force PNG output
-      document.body.style.background = 'transparent';
-      const img = new Image();
-      img.src = canvas.toDataURL('image/png');
-      document.body.appendChild(img);
+      // Output PNG
+      pngOutput.src = canvas.toDataURL('image/png');
     }
 
     // Error handling
@@ -176,11 +176,8 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
 
-      // Force PNG output
-      document.body.style.background = 'transparent';
-      const img = new Image();
-      img.src = canvas.toDataURL('image/png');
-      document.body.appendChild(img);
+      // Output PNG
+      pngOutput.src = canvas.toDataURL('image/png');
     }
 
     // Check for data and redirect if none
