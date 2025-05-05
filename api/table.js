@@ -3,8 +3,10 @@ const path = require('path');
 
 // Register fonts
 try {
-  console.log('Registering Arial font:', path.join(__dirname, 'fonts', 'ARIAL.TTF'));
-  registerFont(path.join(__dirname, 'fonts', 'ARIAL.TTF'), { family: 'Arial' });
+  console.log('Registering DejaVu Sans font:', path.join(__dirname, 'fonts', 'DejaVuSans.ttf'));
+  registerFont(path.join(__dirname, 'fonts', 'DejaVuSans.ttf'), { family: 'DejaVu Sans' });
+  console.log('Registering Roboto font:', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
+  registerFont(path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'), { family: 'Roboto' });
   console.log('Registering Noto Color Emoji font:', path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'));
   registerFont(path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'), { family: 'Noto Color Emoji' });
   console.log('Fonts registered successfully');
@@ -71,7 +73,7 @@ module.exports = async (req, res) => {
   const headerColor = params.get('_header') || '#4c1';
   const borderColor = params.get('_border') || 'transparent';
   const textColor = decodeURIComponent(params.get('_text') || '#ffffff');
-  const fontFamily = params.get('_font') || 'Arial, sans-serif';
+  const fontFamily = params.get('_font') || 'DejaVu Sans, Roboto, sans-serif';
   const fontSize = parseInt(params.get('_size') || '16') || 16;
   const shadow = params.get('_shadow') === 'true';
   const radius = parseInt(params.get('_radius') || '6') || 6;
@@ -86,12 +88,12 @@ module.exports = async (req, res) => {
   }
 
   // Test text rendering
-  console.log('Testing text render with font:', `${fontSize}px Arial`);
-  ctx.font = `${fontSize}px Arial, sans-serif`;
-  ctx.fillStyle = textColor;
+  console.log('Testing text render with font:', `${fontSize}px DejaVu Sans`);
+  ctx.font = `${fontSize}px DejaVu Sans, sans-serif`;
+  ctx.fillStyle = '#ff0000'; // Red for visibility
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('TEST TEXT', canvasWidth / 2, canvasHeight / 2 - 20);
+  ctx.fillText('TEST TEXT', canvasWidth / 2, 20);
   console.log('Test text rendered');
 
   // Calculate cell dimensions
@@ -126,8 +128,8 @@ module.exports = async (req, res) => {
       const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
       const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
-      // Set font (use Noto Color Emoji for icons, Arial for text)
-      const font = cellIcon ? `${fontSize}px Noto Color Emoji, Arial, sans-serif` : `${fontSize}px Arial, sans-serif`;
+      // Set font (use Noto Color Emoji for icons, DejaVu Sans for text)
+      const font = cellIcon ? `${fontSize}px Noto Color Emoji, DejaVu Sans, sans-serif` : `${fontSize}px DejaVu Sans, sans-serif`;
       console.log(`Setting font for cell (${rowIndex}, ${colIndex}):`, font);
       ctx.font = font;
       ctx.fillStyle = textColor;
