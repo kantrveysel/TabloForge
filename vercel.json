@@ -2,7 +2,7 @@
   "version": 2,
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/api/table",
       "headers": [
         {
           "key": "Content-Type",
@@ -50,8 +50,7 @@
       "src": "api/table.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["api/NotoSans-Regular.ttf"],
-        "suppressLoaders": true
+        "includeFiles": ["api/NotoSans-Regular.ttf"]
       }
     }
   ],
@@ -59,15 +58,6 @@
     {
       "source": "/api/table",
       "destination": "/api/table.js"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/NotoSans-Regular.ttf",
-      "dest": "/api/table.js",
-      "headers": {
-        "Content-Type": "application/octet-stream"
-      }
     }
   ]
 }
