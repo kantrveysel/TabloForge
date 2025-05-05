@@ -1,4 +1,14 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/table.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["api/NotoSans.ttf"]
+      }
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
