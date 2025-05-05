@@ -3,7 +3,7 @@ const path = require('path');
 
 // Yazı tipini kaydet
 try {
-  const fontPath = path.join(__dirname, 'NotoSans-Regular.ttf');
+  const fontPath = path.join(process.cwd(),'api', 'NotoSans-Regular.ttf');
   console.log('Attempting to register Noto Sans font:', fontPath);
   registerFont(fontPath, {
     family: 'Noto Sans',
