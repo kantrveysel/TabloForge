@@ -1,19 +1,67 @@
 module.exports = async (req, res) => {
   try {
+    // İkon haritası
+    const iconMap = {
+      'success': '✅',
+      'error': '❌',
+      'warning': '⚠️',
+      'info': 'ℹ️',
+      'star': '⭐',
+      'check': '✔️',
+      'cross': '✖️'
+    };
+
+    // Tema seçenekleri
+    const themes = {
+      'dark': {
+        bgColor: '#1a1a1a',
+        cellColor: '#333333',
+        headerColor: '#4a4a4a',
+        borderColor: '#666666',
+        textColor: '#ffffff'
+      },
+      'light': {
+        bgColor: '#ffffff',
+        cellColor: '#f0f0f0',
+        headerColor: '#d0d0d0',
+        borderColor: '#999999',
+        textColor: '#000000'
+      },
+      'ocean': {
+        bgColor: '#1e3a8a',
+        cellColor: '#3b82f6',
+        headerColor: '#60a5fa',
+        borderColor: '#93c5fd',
+        textColor: '#e0f2fe'
+      }
+    };
+
     // Parametreleri oku
     const params = new URLSearchParams(req.url.split('?')[1]);
     const jsonUrl = params.get('json');
     const canvasSize = (params.get('_canvas') || '800x400').split('x').map(Number);
     const canvasWidth = canvasSize[0] || 800;
     const canvasHeight = canvasSize[1] || 400;
-    const bgColor = params.get('_bg') || 'transparent';
-    const cellColor = params.get('_cell') || 'transparent';
-    const headerColor = params.get('_header') || '#4c1';
-    const borderColor = params.get('_border') || 'transparent';
-    const textColor = decodeURIComponent(params.get('_text') || '#ff0000');
-    const fontSize = parseInt(params.get('_size') || '24') || 24;
+    const theme = params.get('_theme') || '';
     const shadow = params.get('_shadow') === 'true';
     const radius = parseInt(params.get('_radius') || '6') || 6;
+    const fontSize = parseInt(params.get('_size') || '24') || 24;
+
+    // Tema parametrelerini al veya varsayılan değerleri kullan
+    let bgColor = params.get('_bg') || 'transparent';
+    let cellColor = params.get('_cell') || 'transparent';
+    let headerColor = params.get('_header') || '#4c1';
+    let borderColor = params.get('_border') || 'transparent';
+    let textColor = decodeURIComponent(params.get('_text') || '#ff0000');
+
+    // Tema uygula (parametreler override eder)
+    if (themes[theme]) {
+      bgColor = params.get('_bg') || themes[theme].bgColor;
+      cellColor = params.get('_cell') || themes[theme].cellColor;
+      headerColor = params.get('_header') || themes[theme].headerColor;
+      borderColor = params.get('_border') || themes[theme].borderColor;
+      textColor = decodeURIComponent(params.get('_text') || themes[theme].textColor);
+    }
 
     // Veriyi yükle
     let rows = [];
@@ -52,7 +100,7 @@ module.exports = async (req, res) => {
         <!-- Arkaplan -->
         ${bgColor !== 'transparent' ? `<rect width="${canvasWidth}" height="${canvasHeight}" fill="${bgColor}"/>` : ''}
         <!-- Test yazısı -->
-        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="#ff0000" font-family="sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
+        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="${textColor}" font-family="sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
     `;
 
     // Tabloyu çiz
@@ -61,7 +109,25 @@ module.exports = async (req, res) => {
         const x = colIndex * colWidth;
         const y = rowIndex * rowHeight;
         const isHeader = rowIndex === 0;
-        const cellText = typeof cell === 'object' ? (cell.text || cell.toString()) : cell.toString();
+        let cellText = '';
+        let cellIcon = '';
+
+        // Hücre verisini parse et
+        if (typeof cell === 'object') {
+          cellText = cell.text || cell.toString();
+          if (cell.icon && iconMap[cell.icon]) {
+            cellIcon = iconMap[cell.icon];
+          }
+        } else {
+          cellText = cell.toString();
+          // [icon] formatını kontrol et
+          const iconMatch = cellText.match(/\[(\w+)\]/);
+          if (iconMatch && iconMap[iconMatch[1]]) {
+            cellIcon = iconMap[iconMatch[1]];
+            cellText = cellText.replace(iconMatch[0], '').trim();
+          }
+        }
+
         const cellBg = isHeader ? headerColor : cellColor;
 
         // Hücre arkaplanı
@@ -70,10 +136,15 @@ module.exports = async (req, res) => {
           ? `<rect x="${x + 2}" y="${y + 2}" width="${colWidth - 4}" height="${rowHeight - 4}" rx="${radius}" ry="${radius}" fill="${cellBg !== 'transparent' ? cellBg : 'none'}" stroke="${borderColor !== 'transparent' ? borderColor : 'none'}" stroke-width="1" ${shadowFilter}/>`
           : '';
 
-        // Hücre metni
-        const text = `<text x="${x + colWidth / 2}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="sans-serif" font-size="${fontSize}" text-anchor="middle" dominant-baseline="middle">${escapeXml(cellText)}</text>`;
+        // Hücre içeriği (ikon ve metin)
+        let cellContent = '';
+        if (cellIcon) {
+          // İkon ve metni yan yana yerleştir
+          cellContent += `<text x="${x + colWidth / 2 - fontSize}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="sans-serif" font-size="${fontSize}" text-anchor="end" dominant-baseline="middle">${cellIcon}</text>`;
+        }
+        cellContent += `<text x="${x + colWidth / 2 + (cellIcon ? fontSize / 2 : 0)}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="sans-serif" font-size="${fontSize}" text-anchor="${cellIcon ? 'start' : 'middle'}" dominant-baseline="middle">${escapeXml(cellText)}</text>`;
 
-        svgContent += `${rect}${text}`;
+        svgContent += `${rect}${cellContent}`;
       });
     });
 
@@ -112,12 +183,13 @@ module.exports = async (req, res) => {
   }
 };
 
-// Hata mesajı için SVG
+// Hata mesajı için SVG (hata ikonu ile)
 function sendError(res, width, height, message) {
   const svgContent = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="${width}" height="${height}" fill="#e05d44"/>
-      <text x="${width / 2}" y="${height / 2}" fill="#ffffff" font-family="sans-serif" font-size="16" text-anchor="middle" dominant-baseline="middle">${escapeXml(message)}</text>
+      <text x="${width / 2 - 20}" y="${height / 2}" fill="#ffffff" font-family="sans-serif" font-size="16" text-anchor="end" dominant-baseline="middle">🚨</text>
+      <text x="${width / 2 + 10}" y="${height / 2}" fill="#ffffff" font-family="sans-serif" font-size="16" text-anchor="start" dominant-baseline="middle">${escapeXml(message)}</text>
     </svg>
   `;
   res.setHeader('Content-Type', 'image/svg+xml');
@@ -130,9 +202,9 @@ function sendError(res, width, height, message) {
 // XML için güvenli kaçış fonksiyonu
 function escapeXml(unsafe) {
   return unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+    .replace(/&/g, '&')
+    .replace(/</g, '<')
+    .replace(/>/g, '>')
+    .replace(/"/g, '"')
+    .replace(/'/g, ''');
 }
