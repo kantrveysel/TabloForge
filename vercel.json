@@ -20,6 +20,19 @@
           "value": "0"
         }
       ]
+    },
+    {
+      "source": "/examples/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     }
   ]
 }
