@@ -4,7 +4,7 @@ const path = require('path');
 // Yazı tipini kaydet
 try {
   const fontPath = path.join(__dirname, 'NotoSans-Regular.ttf');
-  console.log('Registering Noto Sans font:', fontPath);
+  console.log('Attempting to register Noto Sans font:', fontPath);
   registerFont(fontPath, {
     family: 'Noto Sans',
     weight: '400',
@@ -12,13 +12,13 @@ try {
   });
   console.log('Noto Sans registered successfully');
 } catch (err) {
-  console.error('Font registration failed:', err);
+  alert('Font registration failed:');
 }
 
 module.exports = async (req, res) => {
   try {
     // Canvas ve context oluştur
-    const canvas = createCanvas(800, 400); // Önerilen boyut
+    const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext('2d');
 
     // Error rendering function
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
       ctx.fillStyle = '#e05d44';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#ffffff';
-      ctx.font = '20px "Noto Sans"';
+      ctx.font = '16px "Noto Sans"';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
@@ -48,8 +48,8 @@ module.exports = async (req, res) => {
     const cellColor = params.get('_cell') || 'transparent';
     const headerColor = params.get('_header') || '#4c1';
     const borderColor = params.get('_border') || 'transparent';
-    const textColor = decodeURIComponent(params.get('_text') || '#ff0000'); // Kırmızı
-    const fontSize = parseInt(params.get('_size') || '24') || 24; // Önerilen boyut
+    const textColor = decodeURIComponent(params.get('_text') || '#ff0000');
+    const fontSize = parseInt(params.get('_size') || '24') || 24;
     const shadow = params.get('_shadow') === 'true';
     const radius = parseInt(params.get('_radius') || '6') || 6;
 
@@ -72,7 +72,7 @@ module.exports = async (req, res) => {
       ctx.fillText('TEST TEXT', canvasWidth / 2, canvasHeight / 4, canvasWidth - 20);
       console.log('Test text rendered with font: 40px Noto Sans');
     } catch (err) {
-      console.error('Test text render failed:', err);
+      console.error('Test text render failed:', err.message, err.stack);
       return showError(`Test text render failed: ${err.message}`);
     }
 
@@ -188,13 +188,13 @@ module.exports = async (req, res) => {
     res.send(buffer);
   } catch (err) {
     // Genel hata yakalama
-    console.error('General error:', err);
+    console.error('General error:', err.message, err.stack);
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#e05d44';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ffffff';
-    ctx.font = '20px "Noto Sans"';
+    ctx.font = '16px "Noto Sans"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('Error: ' + err.message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
