@@ -1,240 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>TabloForge</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabloForge - Create Custom SVG Tables</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      background: transparent;
+    /* Custom Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    canvas {
-      display: none;
+    .animate-fadeIn {
+      animation: fadeIn 1s ease-out forwards;
+    }
+    .hover-scale {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
     }
   </style>
 </head>
-<body>
-  <canvas id="tableCanvas" width="200" height="100"></canvas>
+<body class="bg-gradient text-white min-h-screen font-sans">
+  <!-- Header Section -->
+  <header class="text-center py-16">
+    <h1 class="text-5xl md:text-7xl font-bold animate-fadeIn">🧩 TabloForge</h1>
+    <p class="mt-4 text-xl md:text-2xl animate-fadeIn delay-200">
+      Create <span class="text-green-400">custom SVG tables</span> with JSON data – no installation needed!
+    </p>
+    <a href="#usage" class="mt-6 inline-block px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 animate-pulse">
+      Get Started
+    </a>
+  </header>
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const canvas = document.getElementById('tableCanvas');
-    const ctx = canvas.getContext('2d');
+  <!-- Usage Examples Section -->
+  <section id="usage" class="max-w-5xl mx-auto py-16 px-4">
+    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🚀 Usage Examples</h2>
 
-    // Unicode icon mapping
-    const iconMap = {
-      'star': '⭐',
-      'check': '✅',
-      'rocket': '🚀',
-      'heart': '❤️',
-      'fire': '🔥',
-      'user': '👤',
-      'clock': '⏰',
-      'thumb': '👍',
-      'offline': '🔴',
-      'red dot': '🔴',
-      'green dot': '🟢',
-      'waiting': '⏳'
-    };
+    <!-- Example 1: Live Player Count -->
+    <div class="mb-12 animate-fadeIn delay-300">
+      <h3 class="text-2xl font-semibold mb-4">1. Live Player Count (Dark Theme)</h3>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Player Count" class="mx-auto rounded-lg hover-scale">
+      <details class="mt-4 text-gray-300">
+        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+{
+  "rows": [
+    [{"text": "Server", "color": "#4c1"}, {"text": "Players", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
+    [{"text": "MyServer", "color": "transparent"}, {"text": "42", "color": "transparent"}, {"text": "Online", "icon": "success", "color": "transparent"}],
+    [{"text": "SkyBlock", "color": "transparent"}, {"text": "15", "color": "transparent"}, {"text": "Online", "icon": "success", "color": "transparent"}]
+  ]
+}
+        </pre>
+      </details>
+    </div>
 
-    // Customization parameters with defaults
-    const bgColor = params.get('_bg') || 'transparent';
-    const cellColor = params.get('_cell') || 'transparent';
-    const headerColor = params.get('_header') || '#4c1';
-    const borderColor = params.get('_border') || 'transparent';
-    const textColor = params.get('_text') || '#ffffff';
-    const fontSize = params.get('_size') || '16px';
-    const fontFamily = params.get('_font') || 'monospace';
-    const headerFont = params.get('_header_font') || `bold ${fontSize} ${fontFamily}`;
-    const radius = parseInt(params.get('_radius')) || 6;
-    const shadow = params.get('_shadow') === 'true';
-    const gradient = params.get('_gradient') || null;
+    <!-- Example 2: Server Status -->
+    <div class="mb-12 animate-fadeIn delay-400">
+      <h3 class="text-2xl font-semibold mb-4">2. Server Status (Light Theme)</h3>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true" alt="Server Status" class="mx-auto rounded-lg hover-scale">
+      <details class="mt-4 text-gray-300">
+        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+{
+  "rows": [
+    [{"text": "Name", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
+    [{"text": "Alice", "icon": "green dot", "color": "transparent"}, {"text": "Online", "icon": "check", "color": "transparent"}],
+    [{"text": "Bob", "icon": "red dot", "color": "transparent"}, {"text": "Offline", "icon": "offline", "color": "transparent"}]
+  ]
+}
+        </pre>
+      </details>
+    </div>
 
-    // Set canvas size
-    const canvasSize = params.get('_canvas') || '200x100';
-    const [canvasWidth, canvasHeight] = canvasSize.split('x').map(Number);
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    <!-- Example 3: Event Announcement -->
+    <div class="mb-12 animate-fadeIn delay-500">
+      <h3 class="text-2xl font-semibold mb-4">3. Event Announcement (Ocean Theme)</h3>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" alt="Event Announcement" class="mx-auto rounded-lg hover-scale">
+      <details class="mt-4 text-gray-300">
+        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <pre class="bg-gray-800 p-4 rounded-lg mt-2">
+{
+  "rows": [
+    [{"text": "Event", "color": "#60a5fa"}, {"text": "Date", "color": "#60a5fa"}, {"text": "Status", "color": "#60a5fa"}],
+    [{"text": "PvP Tournament", "color": "transparent"}, {"text": "2025-05-10", "color": "transparent"}, {"text": "Upcoming", "icon": "info", "color": "transparent"}],
+    [{"text": "Build Contest", "color": "transparent"}, {"text": "2025-05-15", "color": "transparent"}, {"text": "Planned", "icon": "star", "color": "transparent"}]
+  ]
+}
+        </pre>
+      </details>
+    </div>
+  </section>
 
-    // Apply background
-    function applyCanvasBackground() {
-      try {
-        if (gradient) {
-          const [direction, ...colors] = gradient.split(',');
-          const grad = ctx.createLinearGradient(
-            direction.includes('to-r') ? 0 : 0,
-            direction.includes('to-b') ? 0 : 0,
-            direction.includes('to-r') ? canvas.width : 0,
-            direction.includes('to-b') ? canvas.height : 0
-          );
-          colors.forEach((color, i) => {
-            grad.addColorStop(i / (colors.length - 1), color);
-          });
-          ctx.fillStyle = grad;
-        } else {
-          ctx.fillStyle = bgColor;
-        }
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      } catch (err) {
-        showError(`Background error: ${err.message}`);
-      }
-    }
+  <!-- How to Use Section -->
+  <section class="max-w-5xl mx-auto py-16 px-4">
+    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🧪 How to Use TabloForge?</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-600">
+        <h3 class="text-2xl font-semibold mb-4">1. Prepare Your JSON</h3>
+        <p class="text-gray-300">
+          Create a JSON file with a <code>rows</code> array containing your table data. Example:
+        </p>
+        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
+{
+  "rows": [
+    [{"text": "Header 1", "color": "#4c1"}, {"text": "Header 2", "color": "#4c1"}],
+    [{"text": "Data 1", "icon": "success", "color": "transparent"}, {"text": "Data 2", "icon": "check", "color": "transparent"}]
+  ]
+}
+        </pre>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
+        <h3 class="text-2xl font-semibold mb-4">2. Upload and Use</h3>
+        <p class="text-gray-300">
+          Upload your JSON to a public URL (e.g., GitHub, Vercel), then use it in the TabloForge URL:
+        </p>
+        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
+https://tablo-forge.vercel.app/api/table?json=https://your-site.com/my-table.json&_canvas=600x200&_theme=dark
+        </pre>
+      </div>
+    </div>
+  </section>
 
-    // Rounded rectangle for cells
-    function roundRect(ctx, x, y, width, height, radius) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-    }
+  <!-- Supported Icons Section -->
+  <section class="max-w-5xl mx-auto py-16 px-4">
+    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🎨 Supported Icons</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-gray-300">
+        <thead>
+          <tr class="bg-gray-800">
+            <th class="p-4">Name</th>
+            <th class="p-4">Appearance</th>
+            <th class="p-4">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>success</code></td>
+            <td class="p-4">✅</td>
+            <td class="p-4">Success / active status</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>error</code></td>
+            <td class="p-4">❌</td>
+            <td class="p-4">Error / failed operation</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>warning</code></td>
+            <td class="p-4">⚠️</td>
+            <td class="p-4">Warning</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>info</code></td>
+            <td class="p-4">ℹ️</td>
+            <td class="p-4">Information</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>check</code></td>
+            <td class="p-4">✔️</td>
+            <td class="p-4">Approved content</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>offline</code></td>
+            <td class="p-4">🔴</td>
+            <td class="p-4">Offline</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>online</code></td>
+            <td class="p-4">🟢</td>
+            <td class="p-4">Online</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>star</code></td>
+            <td class="p-4">⭐</td>
+            <td class="p-4">Featured content</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>fire</code></td>
+            <td class="p-4">🔥</td>
+            <td class="p-4">Popular / hot</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>clock</code></td>
+            <td class="p-4">🕒</td>
+            <td class="p-4">Time info / event</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>green dot</code></td>
+            <td class="p-4">🟢</td>
+            <td class="p-4">Available user</td>
+          </tr>
+          <tr class="border-b border-gray-700">
+            <td class="p-4"><code>red dot</code></td>
+            <td class="p-4">🔴</td>
+            <td class="p-4">Busy / offline user</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-gray-300 text-center">Suggest new icons on <a href="https://github.com/veyselfirat/tabloforge/issues" class="text-green-400 hover:underline">GitHub</a>!</p>
+  </section>
 
-    // Draw table
-    function drawTable(data) {
-      try {
-        const rows = data.rows;
-        if (!rows || !rows.length || !rows[0].length) {
-          showError('Invalid data: Empty rows');
-          return;
-        }
-
-        const cellWidth = canvas.width / rows[0].length;
-        const cellHeight = canvas.height / rows.length;
-
-        applyCanvasBackground();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        rows.forEach((row, i) => {
-          row.forEach((cell, j) => {
-            const x = j * cellWidth;
-            const y = i * cellHeight;
-            const isHeader = i === 0;
-
-            // Cell customization from JSON
-            const cellData = typeof cell === 'object' ? cell : { text: cell };
-            const cellText = cellData.text || cell;
-            const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
-            const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
-
-            // Set font based on header or regular cell
-            ctx.font = isHeader ? headerFont : `${fontSize} ${fontFamily}`;
-
-            // Draw cell
-            if (cellBg !== 'transparent' || borderColor !== 'transparent') {
-              if (radius > 0) {
-                roundRect(ctx, x + 2, y + 2, cellWidth - 4, cellHeight - 4, radius);
-                if (cellBg !== 'transparent') {
-                  ctx.fillStyle = cellBg;
-                  ctx.fill();
-                }
-                if (shadow) {
-                  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                  ctx.shadowBlur = 8;
-                  ctx.shadowOffsetY = 2;
-                }
-                if (borderColor !== 'transparent') {
-                  ctx.strokeStyle = borderColor;
-                  ctx.stroke();
-                }
-                ctx.shadowColor = 'transparent';
-              } else {
-                if (cellBg !== 'transparent') {
-                  ctx.fillStyle = cellBg;
-                  ctx.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
-                }
-                if (borderColor !== 'transparent') {
-                  ctx.strokeStyle = borderColor;
-                  ctx.strokeRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
-                }
-              }
-            }
-
-            // Draw text with icon
-            ctx.fillStyle = textColor;
-            const textY = y + cellHeight / 2;
-            const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
-            ctx.fillText(displayText, x + cellWidth / 2, textY);
-          });
-        });
-
-        // Convert canvas to PNG blob and serve it
-        canvas.toBlob(blob => {
-          const url = URL.createObjectURL(blob);
-          document.body.innerHTML = '';
-          window.location = url; // Blob URL’sini tarayıcıya sun
-        }, 'image/png');
-      } catch (err) {
-        showError(`Draw error: ${err.message}`);
-      }
-    }
-
-    // Error handling
-    function showError(message) {
-      applyCanvasBackground();
-      ctx.fillStyle = '#e05d44';
-      ctx.fillRect(10, 10, canvas.width - 20, canvas.height - 20);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = `16px ${fontFamily}`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
-      console.error('Error:', message);
-
-      // Serve error PNG as blob
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        document.body.innerHTML = '';
-        window.location = url;
-      }, 'image/png');
-    }
-
-    // Check for data and redirect if none
-    const jsonUrl = params.get('json');
-    const hasRows = (() => {
-      let i = 1;
-      while (params.get(`r${i}`)) {
-        return true;
-      }
-      return false;
-    })();
-
-    if (!jsonUrl && !hasRows) {
-      console.log('No data provided, redirecting to /pages/main.html');
-      window.location.replace('/pages/main.html');
-    } else if (jsonUrl) {
-      fetch(jsonUrl, { mode: 'cors' })
-        .then(res => {
-          if (!res.ok) throw new Error(`Failed to fetch JSON: ${res.status} ${res.statusText}`);
-          return res.json();
-        })
-        .then(data => {
-          if (!data.rows || !Array.isArray(data.rows)) {
-            throw new Error('Invalid JSON format: "rows" array required');
-          }
-          drawTable(data);
-        })
-        .catch(err => showError(`Error: ${err.message}`));
-    } else {
-      const rows = [];
-      let i = 1;
-      while (params.get(`r${i}`)) {
-        rows.push(params.get(`r${i}`).split(','));
-        i++;
-      }
-      if (rows.length) drawTable({ rows });
-      else showError('No data provided. Use ?json=URL or ?r1=Name,Score etc.');
-    }
-  </script>
+  <!-- Footer Section -->
+  <footer class="text-center py-8 bg-gray-900">
+    <p class="text-gray-400">
+      Developed by <strong>Kantrveysel</strong> •
+      <a href="https://github.com/veyselfirat" class="text-green-400 hover:underline">GitHub</a> •
+      <a href="https://tablo-forge.vercel.app" class="text-green-400 hover:underline">TabloForge</a>
+    </p>
+  </footer>
 </body>
 </html>
