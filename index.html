@@ -14,19 +14,17 @@
       background: transparent;
     }
     canvas {
-      display: none; /* Canvas'ı gizle, sadece PNG göster */
+      display: none;
     }
   </style>
 </head>
 <body>
   <canvas id="tableCanvas" width="200" height="100"></canvas>
-  <img id="pngOutput" alt="Table" />
 
   <script>
     const params = new URLSearchParams(location.search);
     const canvas = document.getElementById('tableCanvas');
     const ctx = canvas.getContext('2d');
-    const pngOutput = document.getElementById('pngOutput');
 
     // Unicode icon mapping
     const iconMap = {
@@ -161,8 +159,14 @@
         });
       });
 
-      // Output PNG
-      pngOutput.src = canvas.toDataURL('image/png');
+      // Output PNG as Blob
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.src = url;
+        document.body.innerHTML = '';
+        document.body.appendChild(img);
+      }, 'image/png');
     }
 
     // Error handling
@@ -176,8 +180,14 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
 
-      // Output PNG
-      pngOutput.src = canvas.toDataURL('image/png');
+      // Output PNG as Blob
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.src = url;
+        document.body.innerHTML = '';
+        document.body.appendChild(img);
+      }, 'image/png');
     }
 
     // Check for data and redirect if none
