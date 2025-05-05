@@ -33,11 +33,22 @@ module.exports = async (req, res) => {
   // 6. (İstersen test yazısı)
   ctx.fillText('TEST TEXT', canvasWidth/2, 20);
 
-  // 7. Buradan sonra tablo çizme kodun gelsin
-  //    — hücre ve border çiz, sonra fillText ile cell içeriğini yaz
-  
-  // ... geri kalan drawTable kodu ...
-};
+  // Error rendering function
+  function showError(message) {
+    ctx.fillStyle = '#e05d44';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
+    const buffer = canvas.toBuffer('image/png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.send(buffer);
+  }
 
   // Error rendering function
   function showError(message) {
