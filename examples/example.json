@@ -1,16 +1,7 @@
 {
   "rows": [
-    [
-      { "text": "Name", "color": "#4a5568" },
-      { "text": "Score", "color": "#4a5568" }
-    ],
-    [
-      { "text": "Alice", "icon": "star", "color": "#2d3748" },
-      { "text": "95", "color": "#ff0000" }
-    ],
-    [
-      { "text": "Bob", "icon": "user", "color": "#2d3748" },
-      { "text": "88", "color": "#2d3748" }
-    ]
+    [{"text": "Name", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
+    [{"text": "Alice", "icon": "green dot", "color": "transparent"}, {"text": "Online", "icon": "check", "color": "transparent"}],
+    [{"text": "Bob", "icon": "red dot", "color": "transparent"}, {"text": "Offline", "icon": "offline", "color": "transparent"}]
   ]
 }
