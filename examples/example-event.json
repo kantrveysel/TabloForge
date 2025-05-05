@@ -1,0 +1,7 @@
+{
+  "rows": [
+    [{"text": "Event", "color": "#60a5fa"}, {"text": "Date", "color": "#60a5fa"}, {"text": "Status", "color": "#60a5fa"}],
+    [{"text": "PvP Tournament", "color": "transparent"}, {"text": "2025-05-10", "color": "transparent"}, {"text": "Upcoming", "icon": "info", "color": "transparent"}],
+    [{"text": "Build Contest", "color": "transparent"}, {"text": "2025-05-15", "color": "transparent"}, {"text": "Planned", "icon": "star", "color": "transparent"}]
+  ]
+}
