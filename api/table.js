@@ -2,17 +2,43 @@ const { createCanvas } = require('@napi-rs/canvas');
 const path = require('path');
 
 module.exports = async (req, res) => {
-  const canvas = createCanvas(300, 200); // Default size for error cases
+  // 1. Canvas ve context oluştur
+  const canvas = createCanvas(300, 200);
   const ctx = canvas.getContext('2d');
-  ctx.font = '16px sans-serif';
-  ctx.fillStyle = textColor;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  // Set background
+
+  // 2. Parametreleri oku
+  const params = new URLSearchParams(req.url.split('?')[1]);
+  const textColor   = decodeURIComponent(params.get('_text')   || '#ffffff');
+  const bgColor     = params.get('_bg')     || 'transparent';
+  const canvasSize  = (params.get('_canvas')|| '300x200').split('x').map(Number);
+  const canvasWidth = canvasSize[0];
+  const canvasHeight= canvasSize[1];
+
+  // 3. Canvas boyutunu güncelle
+  canvas.width  = canvasWidth;
+  canvas.height = canvasHeight;
+
+  // 4. Arkaplanı uygula
   if (bgColor !== 'transparent') {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   }
+
+  // 5. Şimdi güvenle font ve renk ayarlarını yap
+  ctx.font         = '16px sans-serif';
+  ctx.fillStyle    = textColor;
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+
+  // 6. (İstersen test yazısı)
+  ctx.fillText('TEST TEXT', canvasWidth/2, 20);
+
+  // 7. Buradan sonra tablo çizme kodun gelsin
+  //    — hücre ve border çiz, sonra fillText ile cell içeriğini yaz
+  
+  // ... geri kalan drawTable kodu ...
+};
+
   // Error rendering function
   function showError(message) {
     ctx.fillStyle = '#e05d44';
