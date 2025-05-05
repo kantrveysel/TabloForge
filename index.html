@@ -95,15 +95,28 @@
         </pre>
       </details>
     </div>
+
+    <!-- Example 4: Non-JSON Table (Query Parameters) -->
+    <div class="mb-12 animate-fadeIn delay-600">
+      <h3 class="text-2xl font-semibold mb-4">4. Simple Table (Query Parameters)</h3>
+      <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Query Parameter Table" class="mx-auto rounded-lg hover-scale">
+      <p class="mt-4 text-gray-300">
+        Use query parameters like <code>r1=ID,Name,Score</code> to create tables without JSON. Example URL:
+      </p>
+      <pre class="bg-gray-800 p-4 rounded-lg mt-2 text-gray-300">
+https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
+      </pre>
+    </div>
   </section>
 
   <!-- How to Use Section -->
   <section class="max-w-5xl mx-auto py-16 px-4">
     <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🧪 How to Use TabloForge?</h2>
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-600">
-        <h3 class="text-2xl font-semibold mb-4">1. Prepare Your JSON</h3>
-        <p class="text-gray-300">
+    <div class="space-y-6">
+      <!-- Step 1: Prepare Your JSON -->
+      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-600">
+        <summary class="text-2xl font-semibold mb-2 cursor-pointer">1. Prepare Your JSON</summary>
+        <p class="mt-4 text-gray-300">
           Create a JSON file with a <code>rows</code> array containing your table data. Example:
         </p>
         <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
@@ -114,16 +127,29 @@
   ]
 }
         </pre>
-      </div>
-      <div class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
-        <h3 class="text-2xl font-semibold mb-4">2. Upload and Use</h3>
-        <p class="text-gray-300">
+      </details>
+
+      <!-- Step 2: Upload and Use -->
+      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
+        <summary class="text-2xl font-semibold mb-2 cursor-pointer">2. Upload and Use</summary>
+        <p class="mt-4 text-gray-300">
           Upload your JSON to a public URL (e.g., GitHub, Vercel), then use it in the TabloForge URL:
         </p>
         <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
 https://tablo-forge.vercel.app/api/table?json=https://your-site.com/my-table.json&_canvas=600x200&_theme=dark
         </pre>
-      </div>
+      </details>
+
+      <!-- Step 3: Use Query Parameters (Non-JSON) -->
+      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-800">
+        <summary class="text-2xl font-semibold mb-2 cursor-pointer">3. Use Query Parameters</summary>
+        <p class="mt-4 text-gray-300">
+          Create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
+        </p>
+        <pre class="bg-gray-900 p-4 rounded-lg mt-4 text-gray-300">
+https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
+        </pre>
+      </details>
     </div>
   </section>
 
