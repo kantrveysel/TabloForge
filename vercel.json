@@ -5,7 +5,7 @@
       "src": "api/table.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["api/NotoSans.ttf"]
+        "includeFiles": ["api/NotoSans-Regular.ttf"]
       }
     }
   ],
