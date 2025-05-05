@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Type" content="image/png" />
+  <meta http-equiv="Content-Type" content="image/png; charset=UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>TabloForge</title>
   <style>
     body {
@@ -155,6 +157,12 @@
           ctx.fillText(displayText, x + cellWidth / 2, textY);
         });
       });
+
+      // Force PNG output
+      document.body.style.background = 'transparent';
+      const img = new Image();
+      img.src = canvas.toDataURL('image/png');
+      document.body.appendChild(img);
     }
 
     // Error handling
@@ -167,6 +175,12 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
+
+      // Force PNG output
+      document.body.style.background = 'transparent';
+      const img = new Image();
+      img.src = canvas.toDataURL('image/png');
+      document.body.appendChild(img);
     }
 
     // Check for data and redirect if none
