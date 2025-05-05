@@ -195,14 +195,20 @@
 
     // Check for data and redirect if none
     const jsonUrl = params.get('json');
+    console.log('Query params:', Array.from(params.entries()));
     const hasRows = (() => {
       let i = 1;
-      while (params.get(`r${i}`)) {
-        return true;
+      while (true) {
+        const row = params.get(`r${i}`);
+        console.log(`Checking r${i}:`, row);
+        if (!row) break;
+        if (row.trim()) return true;
+        i++;
       }
       return false;
     })();
 
+    console.log('jsonUrl:', jsonUrl, 'hasRows:', hasRows);
     if (!jsonUrl && !hasRows) {
       console.log('No data provided, redirecting to /pages/main.html');
       window.location.replace('/pages/main.html');
@@ -230,7 +236,9 @@
       const rows = [];
       let i = 1;
       while (params.get(`r${i}`)) {
-        rows.push(params.get(`r${i}`).split(','));
+        const row = params.get(`r${i}`);
+        console.log(`Row ${i}:`, row);
+        rows.push(row.split(','));
         i++;
       }
       console.log('Rows:', rows);
