@@ -1,9 +1,9 @@
-const { createCanvas, registerFont } = require('@napi-rs/canvas');
+const { createCanvas, registerFont } = require('canvas');
 const path = require('path');
 
 // Yazı tipini kaydet
 try {
-  const fontPath = path.join(process.cwd(),'api', 'NotoSans-Regular.ttf');
+  const fontPath = path.join(__dirname, 'NotoSans-Regular.ttf');
   console.log('Attempting to register Noto Sans font:', fontPath);
   registerFont(fontPath, {
     family: 'Noto Sans',
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
       ctx.fillStyle = '#e05d44';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#ffffff';
-      ctx.font = '16px Arial';
+      ctx.font = '16px "Noto Sans"';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
 
     // Test yazısı
     try {
-      ctx.font = '40px Arial';
+      ctx.font = '40px "Noto Sans"';
       ctx.fillStyle = '#ff0000';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -130,12 +130,12 @@ module.exports = async (req, res) => {
         const isHeader = rowIndex === 0;
 
         // Hücre verisini parse et (sadece metin)
-        const cellText = typeof cell === 'object' ? (cell.text ?? '') : cell.toString();
+        const cellText = typeof cell === 'object' ? (cell.text || cell.toString()) : cell.toString();
         const cellBg = isHeader ? headerColor : cellColor;
 
         // Font ve yazı ayarları
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillStyle = '#ff0000'//textColor; Force red
+        ctx.font = `${fontSize}px "Noto Sans"`;
+        ctx.fillStyle = textColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         console.log(`Rendering text for cell (${rowIndex}, ${colIndex}): ${cellText}`);
@@ -194,7 +194,7 @@ module.exports = async (req, res) => {
     ctx.fillStyle = '#e05d44';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ffffff';
-    ctx.font = '16px Arial';
+    ctx.font = '16px "Noto Sans"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('Error: ' + err.message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
