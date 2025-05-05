@@ -130,12 +130,12 @@ module.exports = async (req, res) => {
         const isHeader = rowIndex === 0;
 
         // Hücre verisini parse et (sadece metin)
-        const cellText = typeof cell === 'object' ? (cell.text || cell.toString()) : cell.toString();
+        const cellText = typeof cell === 'object' ? (cell.text ?? '') : cell.toString();
         const cellBg = isHeader ? headerColor : cellColor;
 
         // Font ve yazı ayarları
         ctx.font = `${fontSize}px Arial`;
-        ctx.fillStyle = textColor;
+        ctx.fillStyle = '#ff0000'//textColor; Force red
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         console.log(`Rendering text for cell (${rowIndex}, ${colIndex}): ${cellText}`);
