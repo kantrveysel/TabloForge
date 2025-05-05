@@ -44,20 +44,4 @@
         }
       ]
     }
-  ],
-  "builds": [
-    {
-      "src": "api/table.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["api/NotoSans-Regular.ttf"]
-      }
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/table",
-      "destination": "/api/table.js"
-    }
-  ]
 }
