@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TabloForge</title>
   <style>
     body {
@@ -14,32 +14,69 @@
   </style>
 </head>
 <body>
-  <canvas id="tableCanvas" width="240" height="150"></canvas>
+  <canvas id="tableCanvas" width="200" height="100"></canvas>
 
   <script>
     const params = new URLSearchParams(location.search);
     const canvas = document.getElementById('tableCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Customization parameters
-    const bgColor = params.get('_bg') || '#121212';
-    const cellColor = params.get('_cell') || '#092A35';
-    const headerColor = params.get('_header') || '#F8EEB4';
-    const borderColor = params.get('_border') || '#444';
-    const textColor = params.get('_text') || '#658525';
-    const fontSize = params.get('_size') || '20px';
-    const fontFamily = params.get('_font') || 'sans-serif';
-    const radius = parseInt(params.get('_radius')) || 0;
-    const canvasSize = params.get('_canvas');
+    // Unicode icon mapping
+    const iconMap = {
+      'star': '⭐',
+      'check': '✅',
+      'rocket': '🚀',
+      'heart': '❤️',
+      'fire': '🔥',
+      'user': '👤',
+      'clock': '⏰',
+      'thumb': '👍',
+      'offline': '🔴',
+      'red dot': '🔴',
+      'green dot': '🟢',
+      'waiting': '⏳'
+    };
 
-    if (canvasSize) {
-      const [w, h] = canvasSize.split('x').map(Number);
-      canvas.width = w;
-      canvas.height = h;
+    // Customization parameters with defaults
+    const bgColor = params.get('_bg') || 'transparent';
+    const cellColor = params.get('_cell') || 'transparent';
+    const headerColor = params.get('_header') || '#4c1';
+    const borderColor = params.get('_border') || 'transparent';
+    const textColor = params.get('_text') || '#ffffff';
+    const fontSize = params.get('_size') || '16px';
+    const fontFamily = params.get('_font') || 'monospace';
+    const headerFont = params.get('_header_font') || `bold ${fontSize} ${fontFamily}`;
+    const radius = parseInt(params.get('_radius')) || 6;
+    const shadow = params.get('_shadow') === 'true';
+    const gradient = params.get('_gradient') || null;
+    const canvasSize = params.get('_canvas') || '200x100';
+
+    // Set canvas size
+    const [canvasWidth, canvasHeight] = canvasSize.split('x').map(Number);
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Apply background
+    function applyCanvasBackground() {
+      if (gradient) {
+        const [direction, ...colors] = gradient.split(',');
+        const grad = ctx.createLinearGradient(
+          direction.includes('to-r') ? 0 : 0,
+          direction.includes('to-b') ? 0 : 0,
+          direction.includes('to-r') ? canvas.width : 0,
+          direction.includes('to-b') ? canvas.height : 0
+        );
+        colors.forEach((color, i) => {
+          grad.addColorStop(i / (colors.length - 1), color);
+        });
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = bgColor;
+      }
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    document.body.style.backgroundColor = bgColor;
-
+    // Rounded rectangle for cells
     function roundRect(ctx, x, y, width, height, radius) {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
@@ -54,13 +91,13 @@
       ctx.closePath();
     }
 
+    // Draw table
     function drawTable(data) {
       const rows = data.rows;
       const cellWidth = canvas.width / rows[0].length;
       const cellHeight = canvas.height / rows.length;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.font = `${fontSize} ${fontFamily}`;
+      applyCanvasBackground();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
@@ -70,33 +107,91 @@
           const y = i * cellHeight;
           const isHeader = i === 0;
 
-          const fill = isHeader ? headerColor : cellColor;
+          // Cell customization from JSON
+          const cellData = typeof cell === 'object' ? cell : { text: cell };
+          const cellText = cellData.text || cell;
+          const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
+          const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
-          if (radius > 0) {
-            roundRect(ctx, x, y, cellWidth, cellHeight, radius);
-            ctx.fillStyle = fill;
-            ctx.fill();
-            ctx.strokeStyle = borderColor;
-            ctx.stroke();
-          } else {
-            ctx.fillStyle = fill;
-            ctx.fillRect(x, y, cellWidth, cellHeight);
-            ctx.strokeStyle = borderColor;
-            ctx.strokeRect(x, y, cellWidth, cellHeight);
+          // Set font based on header or regular cell
+          ctx.font = isHeader ? headerFont : `${fontSize} ${fontFamily}`;
+
+          // Draw cell
+          if (cellBg !== 'transparent' || borderColor !== 'transparent') {
+            if (radius > 0) {
+              roundRect(ctx, x + 2, y + 2, cellWidth - 4, cellHeight - 4, radius);
+              if (cellBg !== 'transparent') {
+                ctx.fillStyle = cellBg;
+                ctx.fill();
+              }
+              if (shadow) {
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 8;
+                ctx.shadowOffsetY = 2;
+              }
+              if (borderColor !== 'transparent') {
+                ctx.strokeStyle = borderColor;
+                ctx.stroke();
+              }
+              ctx.shadowColor = 'transparent';
+            } else {
+              if (cellBg !== 'transparent') {
+                ctx.fillStyle = cellBg;
+                ctx.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+              }
+              if (borderColor !== 'transparent') {
+                ctx.strokeStyle = borderColor;
+                ctx.strokeRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+              }
+            }
           }
 
+          // Draw text with icon
           ctx.fillStyle = textColor;
-          ctx.fillText(cell, x + cellWidth / 2, y + cellHeight / 2);
+          const textY = y + cellHeight / 2;
+          const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
+          ctx.fillText(displayText, x + cellWidth / 2, textY);
         });
       });
     }
 
+    // Error handling
+    function showError(message) {
+      applyCanvasBackground();
+      ctx.fillStyle = '#e05d44';
+      ctx.fillRect(10, 10, canvas.width - 20, canvas.height - 20);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `16px ${fontFamily}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
+    }
+
+    // Check for data and redirect if none
     const jsonUrl = params.get('json');
-    if (jsonUrl) {
+    const hasRows = (() => {
+      let i = 1;
+      while (params.get(`r${i}`)) {
+        return true;
+      }
+      return false;
+    })();
+
+    if (!jsonUrl && !hasRows) {
+      window.location.href = '/TabloForge/pages/main.html';
+    } else if (jsonUrl) {
       fetch(jsonUrl)
-        .then(res => res.json())
-        .then(data => drawTable(data))
-        .catch(err => console.error('Failed to fetch JSON:', err));
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch JSON');
+          return res.json();
+        })
+        .then(data => {
+          if (!data.rows || !Array.isArray(data.rows)) {
+            throw new Error('Invalid JSON format: "rows" array required');
+          }
+          drawTable(data);
+        })
+        .catch(err => showError(`Error: ${err.message}`));
     } else {
       const rows = [];
       let i = 1;
@@ -104,7 +199,11 @@
         rows.push(params.get(`r${i}`).split(','));
         i++;
       }
-      if (rows.length) drawTable({ rows });
+      if (rows.length) {
+        drawTable({ rows });
+      } else {
+        showError('No data provided. Use ?json=URL or ?r1=Name,Score etc.');
+      }
     }
   </script>
 </body>
