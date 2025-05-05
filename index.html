@@ -159,14 +159,13 @@
         });
 
         // Output PNG binary
-        const dataUrl = canvas.toDataURL('image/png');
-        const base64Data = dataUrl.split(',')[1];
-        const binary = atob(base64Data);
-        const array = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-          array[i] = binary.charCodeAt(i);
-        }
-        document.write(String.fromCharCode.apply(null, array));
+        canvas.toBlob(blob => {
+          blob.arrayBuffer().then(buffer => {
+            const array = new Uint8Array(buffer);
+            const binary = String.fromCharCode.apply(null, array);
+            document.write(binary);
+          });
+        }, 'image/png');
       } catch (err) {
         showError(`Draw error: ${err.message}`);
       }
@@ -185,14 +184,13 @@
       console.error('Error:', message);
 
       // Output PNG binary
-      const dataUrl = canvas.toDataURL('image/png');
-      const base64Data = dataUrl.split(',')[1];
-      const binary = atob(base64Data);
-      const array = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) {
-        array[i] = binary.charCodeAt(i);
-      }
-      document.write(String.fromCharCode.apply(null, array));
+      canvas.toBlob(blob => {
+        blob.arrayBuffer().then(buffer => {
+          const array = new Uint8Array(buffer);
+          const binary = String.fromCharCode.apply(null, array);
+          document.write(binary);
+        });
+      }, 'image/png');
     }
 
     // Check for data and redirect if none
