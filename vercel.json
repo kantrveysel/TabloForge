@@ -2,7 +2,7 @@
   "version": 2,
   "headers": [
     {
-      "source": "/api/table",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Content-Type",
@@ -43,21 +43,6 @@
           "value": "text/html"
         }
       ]
-    }
-  ],
-  "builds": [
-    {
-      "src": "api/table.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["api/NotoSans-Regular.ttf"]
-      }
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/table",
-      "destination": "/api/table.js"
     }
   ]
 }
