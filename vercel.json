@@ -33,6 +33,22 @@
           "value": "application/json"
         }
       ]
+    },
+    {
+      "source": "/pages/main.html",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/pages/main.html",
+      "permanent": false
     }
   ]
 }
