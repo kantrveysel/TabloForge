@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
         <!-- Arkaplan -->
         ${bgColor !== 'transparent' ? `<rect width="${canvasWidth}" height="${canvasHeight}" fill="${bgColor}"/>` : ''}
         <!-- Test yazısı -->
-        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="#ff0000" font-family="sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
+        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="#ff0000" font-family="Arial, sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
     `;
 
     // Tabloyu çiz
@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
           : '';
 
         // Hücre metni
-        const text = `<text x="${x + colWidth / 2}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="sans-serif" font-size="${fontSize}" text-anchor="middle" dominant-baseline="middle">${escapeXml(cellText)}</text>`;
+        const text = `<text x="${x + colWidth / 2}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="Arial, sans-serif" font-size="${fontSize}" text-anchor="middle" dominant-baseline="middle">${escapeXml(cellText)}</text>`;
 
         svgContent += `${rect}${text}`;
       });
@@ -104,6 +104,7 @@ module.exports = async (req, res) => {
 
     // SVG'yi PNG'ye çevir
     const buffer = await sharp(Buffer.from(svgContent))
+      .density(300) // Font render'ını iyileştir
       .png()
       .toBuffer();
 
@@ -124,10 +125,11 @@ function sendError(res, width, height, message) {
   const svgContent = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="${width}" height="${height}" fill="#e05d44"/>
-      <text x="${width / 2}" y="${height / 2}" fill="#ffffff" font-family="sans-serif" font-size="16" text-anchor="middle" dominant-baseline="middle">${escapeXml(message)}</text>
+      <text x="${width / 2}" y="${height / 2}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" dominant-baseline="middle">${escapeXml(message)}</text>
     </svg>
   `;
   sharp(Buffer.from(svgContent))
+    .density(300)
     .png()
     .toBuffer()
     .then(buffer => {
@@ -145,14 +147,10 @@ function sendError(res, width, height, message) {
 
 // XML için güvenli kaçış fonksiyonu
 function escapeXml(unsafe) {
-  return unsafe.replace(/[<>&'"]/g, c => {
-    switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
-      default: return c;
-    }
-  });
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;');
 }
