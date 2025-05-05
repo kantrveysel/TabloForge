@@ -1,43 +1,7 @@
-const { createCanvas, registerFont } = require('canvas');
-const path = require('path');
-
-// Yazı tipini kaydet
-try {
-  const fontPath = path.join(__dirname, 'NotoSans-Regular.ttf');
-  console.log('Attempting to register Noto Sans font:', fontPath);
-  registerFont(fontPath, {
-    family: 'Noto Sans',
-    weight: '400',
-    style: 'normal'
-  });
-  console.log('Noto Sans registered successfully');
-} catch (err) {
-  console.error('Font registration failed:', err.message, err.stack);
-}
+const sharp = require('sharp');
 
 module.exports = async (req, res) => {
   try {
-    // Canvas ve context oluştur
-    const canvas = createCanvas(800, 400);
-    const ctx = canvas.getContext('2d');
-
-    // Error rendering function
-    function showError(message) {
-      ctx.fillStyle = '#e05d44';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '16px "Noto Sans"';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
-      const buffer = canvas.toBuffer('image/png');
-      res.setHeader('Content-Type', 'image/png');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-      res.send(buffer);
-    }
-
     // Parametreleri oku
     const params = new URLSearchParams(req.url.split('?')[1]);
     const jsonUrl = params.get('json');
@@ -53,29 +17,6 @@ module.exports = async (req, res) => {
     const shadow = params.get('_shadow') === 'true';
     const radius = parseInt(params.get('_radius') || '6') || 6;
 
-    // Canvas boyutunu güncelle
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-
-    // Arkaplanı uygula
-    if (bgColor !== 'transparent') {
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    }
-
-    // Test yazısı
-    try {
-      ctx.font = '40px "Noto Sans"';
-      ctx.fillStyle = '#ff0000';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('TEST TEXT', canvasWidth / 2, canvasHeight / 4, canvasWidth - 20);
-      console.log('Test text rendered with font: 40px Noto Sans');
-    } catch (err) {
-      console.error('Test text render failed:', err.message, err.stack);
-      return showError(`Test text render failed: ${err.message}`);
-    }
-
     // Veriyi yükle
     let rows = [];
     if (jsonUrl) {
@@ -88,7 +29,7 @@ module.exports = async (req, res) => {
         console.log('Fetched rows:', rows);
       } catch (err) {
         console.error('JSON fetch failed:', err);
-        return showError(`JSON fetch failed: ${err.message}`);
+        return sendError(res, canvasWidth, canvasHeight, `JSON fetch failed: ${err.message}`);
       }
     } else {
       let i = 1;
@@ -100,27 +41,21 @@ module.exports = async (req, res) => {
     }
 
     if (rows.length === 0) {
-      return showError('No data provided');
+      return sendError(res, canvasWidth, canvasHeight, 'No data provided');
     }
 
     // Hücre boyutlarını hesapla
     const rowHeight = canvasHeight / rows.length;
     const colWidth = canvasWidth / rows[0].length;
 
-    // Yuvarlak dikdörtgen fonksiyonu
-    function roundRect(ctx, x, y, width, height, radius) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
-    }
+    // SVG oluştur
+    let svgContent = `
+      <svg width="${canvasWidth}" height="${canvasHeight}" xmlns="http://www.w3.org/2000/svg">
+        <!-- Arkaplan -->
+        ${bgColor !== 'transparent' ? `<rect width="${canvasWidth}" height="${canvasHeight}" fill="${bgColor}"/>` : ''}
+        <!-- Test yazısı -->
+        <text x="${canvasWidth / 2}" y="${canvasHeight / 4}" fill="#ff0000" font-family="sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">TEST TEXT</text>
+    `;
 
     // Tabloyu çiz
     rows.forEach((row, rowIndex) => {
@@ -128,81 +63,96 @@ module.exports = async (req, res) => {
         const x = colIndex * colWidth;
         const y = rowIndex * rowHeight;
         const isHeader = rowIndex === 0;
-
-        // Hücre verisini parse et (sadece metin)
         const cellText = typeof cell === 'object' ? (cell.text || cell.toString()) : cell.toString();
         const cellBg = isHeader ? headerColor : cellColor;
 
-        // Font ve yazı ayarları
-        ctx.font = `${fontSize}px "Noto Sans"`;
-        ctx.fillStyle = textColor;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        console.log(`Rendering text for cell (${rowIndex}, ${colIndex}): ${cellText}`);
+        // Hücre arkaplanı
+        const shadowFilter = shadow ? `filter="url(#shadow)"` : '';
+        const rect = cellBg !== 'transparent' || borderColor !== 'transparent'
+          ? `<rect x="${x + 2}" y="${y + 2}" width="${colWidth - 4}" height="${rowHeight - 4}" rx="${radius}" ry="${radius}" fill="${cellBg !== 'transparent' ? cellBg : 'none'}" stroke="${borderColor !== 'transparent' ? borderColor : 'none'}" stroke-width="1" ${shadowFilter}/>`
+          : '';
 
-        // Gölge uygula
-        if (shadow) {
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-          ctx.shadowBlur = 4;
-          ctx.shadowOffsetX = 2;
-          ctx.shadowOffsetY = 2;
-        } else {
-          ctx.shadowColor = 'transparent';
-        }
+        // Hücre metni
+        const text = `<text x="${x + colWidth / 2}" y="${y + rowHeight / 2}" fill="${textColor}" font-family="sans-serif" font-size="${fontSize}" text-anchor="middle" dominant-baseline="middle">${escapeXml(cellText)}</text>`;
 
-        // Hücre arkaplanını çiz
-        if (cellBg !== 'transparent') {
-          if (radius > 0) {
-            roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
-            ctx.fillStyle = cellBg;
-            ctx.fill();
-          } else {
-            ctx.fillStyle = cellBg;
-            ctx.fillRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
-          }
-        }
-
-        // Kenarlık çiz
-        if (borderColor !== 'transparent') {
-          if (radius > 0) {
-            roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
-            ctx.strokeStyle = borderColor;
-            ctx.stroke();
-          } else {
-            ctx.strokeStyle = borderColor;
-            ctx.strokeRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
-          }
-        }
-
-        // Metni çiz (maksimum genişlik ile)
-        ctx.fillText(cellText, x + colWidth / 2, y + rowHeight / 2, colWidth - 10);
+        svgContent += `${rect}${text}`;
       });
     });
 
+    // Gölge filtresi (varsa)
+    if (shadow) {
+      svgContent = `
+        <svg width="${canvasWidth}" height="${canvasHeight}" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+              <feOffset dx="2" dy="2" result="offsetblur"/>
+              <feComponentTransfer>
+                <feFuncA type="linear" slope="0.5"/>
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          ${svgContent.slice(svgContent.indexOf('>') + 1)}
+      `;
+    }
+
+    svgContent += '</svg>';
+
+    // SVG'yi PNG'ye çevir
+    const buffer = await sharp(Buffer.from(svgContent))
+      .png()
+      .toBuffer();
+
     // PNG response gönder
-    const buffer = canvas.toBuffer('image/png');
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     res.send(buffer);
   } catch (err) {
-    // Genel hata yakalama
-    console.error('General error:', err.message, err.stack);
-    const canvas = createCanvas(800, 400);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#e05d44';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '16px "Noto Sans"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Error: ' + err.message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
-    const buffer = canvas.toBuffer('image/png');
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.send(buffer);
+    console.error('General error:', err);
+    return sendError(res, 800, 400, `Error: ${err.message}`);
   }
 };
+
+// Hata mesajı için SVG
+function sendError(res, width, height, message) {
+  const svgContent = `
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${width}" height="${height}" fill="#e05d44"/>
+      <text x="${width / 2}" y="${height / 2}" fill="#ffffff" font-family="sans-serif" font-size="16" text-anchor="middle" dominant-baseline="middle">${escapeXml(message)}</text>
+    </svg>
+  `;
+  sharp(Buffer.from(svgContent))
+    .png()
+    .toBuffer()
+    .then(buffer => {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.send(buffer);
+    })
+    .catch(err => {
+      console.error('Error rendering error SVG:', err);
+      res.status(500).send('Internal Server Error');
+    });
+}
+
+// XML için güvenli kaçış fonksiyonu
+function escapeXml(unsafe) {
+  return unsafe.replace(/[<>&'"]/g, c => {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+}
