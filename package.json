@@ -4,6 +4,6 @@
   "main": "index.js",
   "type": "commonjs",
   "dependencies": {
-    "@napi-rs/canvas": "^0.1.37"
+    "canvas": "^2.11.2"
   }
 }
