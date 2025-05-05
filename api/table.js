@@ -1,4 +1,7 @@
-const { createCanvas } = require('@napi-rs/canvas');
+const { createCanvas, registerFont } = require('@napi-rs/canvas');
+
+// Register the custom font
+registerFont('./fonts/ARIAL.TTF', { family: 'Arial' });
 
 module.exports = async (req, res) => {
   // Parse query parameters
