@@ -1,41 +1,16 @@
 const { createCanvas, registerFont } = require('@napi-rs/canvas');
 const path = require('path');
 
+// Register fonts
+  console.log('Registering DejaVu Sans font:', path.join(__dirname, 'fonts', 'DejaVuSans.ttf'));
+  registerFont(path.join(__dirname, 'fonts', 'DejaVuSans.ttf'), { family: 'DejaVu Sans' });
+  console.log('Registering Roboto font:', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
+  registerFont(path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'), { family: 'Roboto' });
+  console.log('Registering Noto Color Emoji font:', path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'));
+  registerFont(path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'), { family: 'Noto Color Emoji' });
+  console.log('Fonts registered successfully');
+
 module.exports = async (req, res) => {
-  const canvas = createCanvas(300, 200); // Default size for error cases
-  const ctx = canvas.getContext('2d');
-
-  // Error rendering function
-  function showError(message) {
-    ctx.fillStyle = '#e05d44';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '20px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
-    const buffer = canvas.toBuffer('image/png');
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.send(buffer);
-  }
-
-  // Register fonts
-  try {
-    console.log('Registering DejaVu Sans font:', path.join(__dirname, 'fonts', 'DejaVuSans.ttf'));
-    registerFont(path.join(__dirname, 'fonts', 'DejaVuSans.ttf'), { family: 'DejaVu Sans' });
-    console.log('Registering Roboto font:', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
-    registerFont(path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'), { family: 'Roboto' });
-    console.log('Registering Noto Color Emoji font:', path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'));
-    registerFont(path.join(__dirname, 'fonts', 'NotoColorEmoji.ttf'), { family: 'Noto Color Emoji' });
-    console.log('Fonts registered successfully');
-  } catch (err) {
-    console.error('Font registration failed:', err);
-    return showError(`Font registration failed: ${err.message}`);
-  }
-
   // Parse query parameters
   const params = new URLSearchParams(req.url.split('?')[1]);
   const jsonUrl = params.get('json');
@@ -68,8 +43,8 @@ module.exports = async (req, res) => {
       rows = data.rows;
       console.log('Fetched rows:', rows);
     } catch (err) {
-      console.error('JSON fetch failed:', err);
-      return showError(`JSON fetch failed: ${err.message}`);
+      res.status(400).send(`Error: ${err.message}`);
+      return;
     }
   } else {
     let i = 1;
@@ -81,24 +56,26 @@ module.exports = async (req, res) => {
   }
 
   if (rows.length === 0) {
-    return showError('No data provided');
+    res.status(400).send('No data provided');
+    return;
   }
 
   // Canvas setup from query params
-  const canvasSize = (params.get('_canvas') || '300x200').split('x');
-  const canvasWidth = parseInt(canvasSize[0]) || 300;
-  const canvasHeight = parseInt(canvasSize[1]) || 200;
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
+  const canvasSize = (params.get('_canvas') || '200x100').split('x');
+  const canvasWidth = parseInt(canvasSize[0]) || 200;
+  const canvasHeight = parseInt(canvasSize[1]) || 100;
   const bgColor = params.get('_bg') || 'transparent';
   const cellColor = params.get('_cell') || 'transparent';
   const headerColor = params.get('_header') || '#4c1';
   const borderColor = params.get('_border') || 'transparent';
   const textColor = decodeURIComponent(params.get('_text') || '#ffffff');
-  const fontFamily = params.get('_font') || 'sans-serif';
-  const fontSize = parseInt(params.get('_size') || '20') || 20;
+  const fontFamily = params.get('_font') || 'DejaVu Sans, Roboto, sans-serif';
+  const fontSize = parseInt(params.get('_size') || '16') || 16;
   const shadow = params.get('_shadow') === 'true';
   const radius = parseInt(params.get('_radius') || '6') || 6;
+
+  const canvas = createCanvas(canvasWidth, canvasHeight);
+  const ctx = canvas.getContext('2d');
 
   // Set background
   if (bgColor !== 'transparent') {
@@ -107,12 +84,12 @@ module.exports = async (req, res) => {
   }
 
   // Test text rendering
-  console.log('Testing text render with font:', `30px sans-serif`);
-  ctx.font = '30px sans-serif';
+  console.log('Testing text render with font:', `${fontSize}px DejaVu Sans`);
+  ctx.font = `${fontSize}px DejaVu Sans, sans-serif`;
   ctx.fillStyle = '#ff0000'; // Red for visibility
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('TEST TEXT', canvasWidth / 2, 30);
+  ctx.fillText('TEST TEXT', canvasWidth / 2, 20);
   console.log('Test text rendered');
 
   // Calculate cell dimensions
@@ -135,71 +112,66 @@ module.exports = async (req, res) => {
   }
 
   // Draw table
-  try {
-    rows.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        const x = colIndex * colWidth;
-        const y = rowIndex * rowHeight;
-        const isHeader = rowIndex === 0;
+  rows.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const x = colIndex * colWidth;
+      const y = rowIndex * rowHeight;
+      const isHeader = rowIndex === 0;
 
-        // Parse cell data (support JSON-like objects from JSON input)
-        let cellData = typeof cell === 'object' ? cell : { text: cell };
-        const cellText = cellData.text || cell.toString();
-        const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
-        const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
+      // Parse cell data (support JSON-like objects from JSON input)
+      let cellData = typeof cell === 'object' ? cell : { text: cell };
+      const cellText = cellData.text || cell.toString();
+      const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
+      const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
-        // Set font (use sans-serif as fallback)
-        const font = cellIcon ? `${fontSize}px Noto Color Emoji, sans-serif` : `${fontSize}px sans-serif`;
-        console.log(`Setting font for cell (${rowIndex}, ${colIndex}):`, font);
-        ctx.font = font;
-        ctx.fillStyle = textColor;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+      // Set font (use Noto Color Emoji for icons, DejaVu Sans for text)
+      const font = cellIcon ? `${fontSize}px Noto Color Emoji, DejaVu Sans, sans-serif` : `${fontSize}px DejaVu Sans, sans-serif`;
+      console.log(`Setting font for cell (${rowIndex}, ${colIndex}):`, font);
+      ctx.font = font;
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-        // Apply shadow
-        if (shadow) {
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-          ctx.shadowBlur = 4;
-          ctx.shadowOffsetX = 2;
-          ctx.shadowOffsetY = 2;
+      // Apply shadow
+      if (shadow) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+      } else {
+        ctx.shadowColor = 'transparent';
+      }
+
+      // Draw cell background
+      if (cellBg !== 'transparent') {
+        if (radius > 0) {
+          roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
+          ctx.fillStyle = cellBg;
+          ctx.fill();
         } else {
-          ctx.shadowColor = 'transparent';
+          ctx.fillStyle = cellBg;
+          ctx.fillRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
         }
+      }
 
-        // Draw cell background
-        if (cellBg !== 'transparent') {
-          if (radius > 0) {
-            roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
-            ctx.fillStyle = cellBg;
-            ctx.fill();
-          } else {
-            ctx.fillStyle = cellBg;
-            ctx.fillRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
-          }
+      // Draw border
+      if (borderColor !== 'transparent') {
+        if (radius > 0) {
+          roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
+          ctx.strokeStyle = borderColor;
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = borderColor;
+          ctx.strokeRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
         }
+      }
 
-        // Draw border
-        if (borderColor !== 'transparent') {
-          if (radius > 0) {
-            roundRect(ctx, x + 2, y + 2, colWidth - 4, rowHeight - 4, radius);
-            ctx.strokeStyle = borderColor;
-            ctx.stroke();
-          } else {
-            ctx.strokeStyle = borderColor;
-            ctx.strokeRect(x + 2, y + 2, colWidth - 4, rowHeight - 4);
-          }
-        }
-
-        // Draw text with icon
-        const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
-        console.log(`Rendering text for cell (${rowIndex}, ${colIndex}):`, displayText);
-        ctx.fillText(displayText, x + colWidth / 2, y + rowHeight / 2);
-      });
+      // Draw text with icon
+      const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
+      console.log(`Rendering text for cell (${rowIndex}, ${colIndex}):`, displayText);
+      ctx.fillText(displayText, x + colWidth / 2, y + rowHeight / 2);
     });
-  } catch (err) {
-    console.error('Table rendering failed:', err);
-    return showError(`Table rendering failed: ${err.message}`);
-  }
+  });
 
   // Send PNG response
   const buffer = canvas.toBuffer('image/png');
