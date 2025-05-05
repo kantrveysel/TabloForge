@@ -62,22 +62,26 @@
 
     // Apply background
     function applyCanvasBackground() {
-      if (gradient) {
-        const [direction, ...colors] = gradient.split(',');
-        const grad = ctx.createLinearGradient(
-          direction.includes('to-r') ? 0 : 0,
-          direction.includes('to-b') ? 0 : 0,
-          direction.includes('to-r') ? canvas.width : 0,
-          direction.includes('to-b') ? canvas.height : 0
-        );
-        colors.forEach((color, i) => {
-          grad.addColorStop(i / (colors.length - 1), color);
-        });
-        ctx.fillStyle = grad;
-      } else {
-        ctx.fillStyle = bgColor;
+      try {
+        if (gradient) {
+          const [direction, ...colors] = gradient.split(',');
+          const grad = ctx.createLinearGradient(
+            direction.includes('to-r') ? 0 : 0,
+            direction.includes('to-b') ? 0 : 0,
+            direction.includes('to-r') ? canvas.width : 0,
+            direction.includes('to-b') ? canvas.height : 0
+          );
+          colors.forEach((color, i) => {
+            grad.addColorStop(i / (colors.length - 1), color);
+          });
+          ctx.fillStyle = grad;
+        } else {
+          ctx.fillStyle = bgColor;
+        }
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } catch (err) {
+        showError(`Background error: ${err.message}`);
       }
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     // Rounded rectangle for cells
@@ -97,71 +101,80 @@
 
     // Draw table
     function drawTable(data) {
-      const rows = data.rows;
-      if (!rows || !rows.length || !rows[0].length) {
-        showError('Invalid data: Empty rows');
-        return;
-      }
+      try {
+        const rows = data.rows;
+        if (!rows || !rows.length || !rows[0].length) {
+          showError('Invalid data: Empty rows');
+          return;
+        }
 
-      const cellWidth = canvas.width / rows[0].length;
-      const cellHeight = canvas.height / rows.length;
+        const cellWidth = canvas.width / rows[0].length;
+        const cellHeight = canvas.height / rows.length;
 
-      applyCanvasBackground();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+        applyCanvasBackground();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-      rows.forEach((row, i) => {
-        row.forEach((cell, j) => {
-          const x = j * cellWidth;
-          const y = i * cellHeight;
-          const isHeader = i === 0;
+        rows.forEach((row, i) => {
+          row.forEach((cell, j) => {
+            const x = j * cellWidth;
+            const y = i * cellHeight;
+            const isHeader = i === 0;
 
-          // Cell customization from JSON
-          const cellData = typeof cell === 'object' ? cell : { text: cell };
-          const cellText = cellData.text || cell;
-          const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
-          const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
+            // Cell customization from JSON
+            const cellData = typeof cell === 'object' ? cell : { text: cell };
+            const cellText = cellData.text || cell;
+            const cellIcon = cellData.icon ? iconMap[cellData.icon] || '' : '';
+            const cellBg = cellData.color || (isHeader ? headerColor : cellColor);
 
-          // Set font based on header or regular cell
-          ctx.font = isHeader ? headerFont : `${fontSize} ${fontFamily}`;
+            // Set font based on header or regular cell
+            ctx.font = isHeader ? headerFont : `${fontSize} ${fontFamily}`;
 
-          // Draw cell
-          if (cellBg !== 'transparent' || borderColor !== 'transparent') {
-            if (radius > 0) {
-              roundRect(ctx, x + 2, y + 2, cellWidth - 4, cellHeight - 4, radius);
-              if (cellBg !== 'transparent') {
-                ctx.fillStyle = cellBg;
-                ctx.fill();
-              }
-              if (shadow) {
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                ctx.shadowBlur = 8;
-                ctx.shadowOffsetY = 2;
-              }
-              if (borderColor !== 'transparent') {
-                ctx.strokeStyle = borderColor;
-                ctx.stroke();
-              }
-              ctx.shadowColor = 'transparent';
-            } else {
-              if (cellBg !== 'transparent') {
-                ctx.fillStyle = cellBg;
-                ctx.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
-              }
-              if (borderColor !== 'transparent') {
-                ctx.strokeStyle = borderColor;
-                ctx.strokeRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+            // Draw cell
+            if (cellBg !== 'transparent' || borderColor !== 'transparent') {
+              if (radius > 0) {
+                roundRect(ctx, x + 2, y + 2, cellWidth - 4, cellHeight - 4, radius);
+                if (cellBg !== 'transparent') {
+                  ctx.fillStyle = cellBg;
+                  ctx.fill();
+                }
+                if (shadow) {
+                  ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                  ctx.shadowBlur = 8;
+                  ctx.shadowOffsetY = 2;
+                }
+                if (borderColor !== 'transparent') {
+                  ctx.strokeStyle = borderColor;
+                  ctx.stroke();
+                }
+                ctx.shadowColor = 'transparent';
+              } else {
+                if (cellBg !== 'transparent') {
+                  ctx.fillStyle = cellBg;
+                  ctx.fillRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+                }
+                if (borderColor !== 'transparent') {
+                  ctx.strokeStyle = borderColor;
+                  ctx.strokeRect(x + 2, y + 2, cellWidth - 4, cellHeight - 4);
+                }
               }
             }
-          }
 
-          // Draw text with icon
-          ctx.fillStyle = textColor;
-          const textY = y + cellHeight / 2;
-          const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
-          ctx.fillText(displayText, x + cellWidth / 2, textY);
+            // Draw text with icon
+            ctx.fillStyle = textColor;
+            const textY = y + cellHeight / 2;
+            const displayText = cellIcon ? `${cellIcon} ${cellText}` : cellText;
+            ctx.fillText(displayText, x + cellWidth / 2, textY);
+          });
         });
-      });
+
+        // Force PNG output
+        const img = new Image();
+        img.src = canvas.toDataURL('image/png');
+        document.body.appendChild(img);
+      } catch (err) {
+        showError(`Draw error: ${err.message}`);
+      }
     }
 
     // Error handling
@@ -175,6 +188,11 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
       console.error('Error:', message);
+
+      // Force PNG output
+      const img = new Image();
+      img.src = canvas.toDataURL('image/png');
+      document.body.appendChild(img);
     }
 
     // Check for data and redirect if none
@@ -188,14 +206,18 @@
     })();
 
     if (!jsonUrl && !hasRows) {
+      console.log('No data provided, redirecting to /pages/main.html');
       window.location.href = '/pages/main.html';
     } else if (jsonUrl) {
+      console.log('Fetching JSON from:', jsonUrl);
       fetch(jsonUrl, { mode: 'cors' })
         .then(res => {
+          console.log('Fetch response:', res.status, res.statusText);
           if (!res.ok) throw new Error(`Failed to fetch JSON: ${res.status} ${res.statusText}`);
           return res.json();
         })
         .then(data => {
+          console.log('Fetched data:', data);
           if (!data.rows || !Array.isArray(data.rows)) {
             throw new Error('Invalid JSON format: "rows" array required');
           }
@@ -206,16 +228,18 @@
           console.error('Fetch error:', err);
         });
     } else {
+      console.log('Processing query params');
       const rows = [];
       let i = 1;
       while (params.get(`r${i}`)) {
         rows.push(params.get(`r${i}`).split(','));
         i++;
       }
+      console.log('Rows:', rows);
       if (rows.length) {
         drawTable({ rows });
       } else {
-        showError('No data provided. Use ?json=URL or ?r1=Name,Score etc.');
+        showError('No valid data provided. Use ?json=URL or ?r1=Name,Score etc.');
       }
     }
   </script>
