@@ -98,6 +98,11 @@
     // Draw table
     function drawTable(data) {
       const rows = data.rows;
+      if (!rows || !rows.length || !rows[0].length) {
+        showError('Invalid data: Empty rows');
+        return;
+      }
+
       const cellWidth = canvas.width / rows[0].length;
       const cellHeight = canvas.height / rows.length;
 
@@ -169,6 +174,7 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(message, canvas.width / 2, canvas.height / 2, canvas.width - 40);
+      console.error('Error:', message);
     }
 
     // Check for data and redirect if none
@@ -182,11 +188,11 @@
     })();
 
     if (!jsonUrl && !hasRows) {
-      window.location.href = '/TabloForge/pages/main.html';
+      window.location.href = '/pages/main.html';
     } else if (jsonUrl) {
-      fetch(jsonUrl)
+      fetch(jsonUrl, { mode: 'cors' })
         .then(res => {
-          if (!res.ok) throw new Error('Failed to fetch JSON');
+          if (!res.ok) throw new Error(`Failed to fetch JSON: ${res.status} ${res.statusText}`);
           return res.json();
         })
         .then(data => {
@@ -195,7 +201,10 @@
           }
           drawTable(data);
         })
-        .catch(err => showError(`Error: ${err.message}`));
+        .catch(err => {
+          showError(`Error: ${err.message}`);
+          console.error('Fetch error:', err);
+        });
     } else {
       const rows = [];
       let i = 1;
