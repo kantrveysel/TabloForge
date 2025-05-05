@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TabloForge</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="tableCanvas" width="240" height="150"></canvas>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const canvas = document.getElementById('tableCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Customization parameters
+    const bgColor = params.get('_bg') || '#121212';
+    const cellColor = params.get('_cell') || '#092A35';
+    const headerColor = params.get('_header') || '#F8EEB4';
+    const borderColor = params.get('_border') || '#444';
+    const textColor = params.get('_text') || '#658525';
+    const fontSize = params.get('_size') || '20px';
+    const fontFamily = params.get('_font') || 'sans-serif';
+    const radius = parseInt(params.get('_radius')) || 0;
+    const canvasSize = params.get('_canvas');
+
+    if (canvasSize) {
+      const [w, h] = canvasSize.split('x').map(Number);
+      canvas.width = w;
+      canvas.height = h;
+    }
+
+    document.body.style.backgroundColor = bgColor;
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function drawTable(data) {
+      const rows = data.rows;
+      const cellWidth = canvas.width / rows[0].length;
+      const cellHeight = canvas.height / rows.length;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = `${fontSize} ${fontFamily}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      rows.forEach((row, i) => {
+        row.forEach((cell, j) => {
+          const x = j * cellWidth;
+          const y = i * cellHeight;
+          const isHeader = i === 0;
+
+          const fill = isHeader ? headerColor : cellColor;
+
+          if (radius > 0) {
+            roundRect(ctx, x, y, cellWidth, cellHeight, radius);
+            ctx.fillStyle = fill;
+            ctx.fill();
+            ctx.strokeStyle = borderColor;
+            ctx.stroke();
+          } else {
+            ctx.fillStyle = fill;
+            ctx.fillRect(x, y, cellWidth, cellHeight);
+            ctx.strokeStyle = borderColor;
+            ctx.strokeRect(x, y, cellWidth, cellHeight);
+          }
+
+          ctx.fillStyle = textColor;
+          ctx.fillText(cell, x + cellWidth / 2, y + cellHeight / 2);
+        });
+      });
+    }
+
+    const jsonUrl = params.get('json');
+    if (jsonUrl) {
+      fetch(jsonUrl)
+        .then(res => res.json())
+        .then(data => drawTable(data))
+        .catch(err => console.error('Failed to fetch JSON:', err));
+    } else {
+      const rows = [];
+      let i = 1;
+      while (params.get(`r${i}`)) {
+        rows.push(params.get(`r${i}`).split(','));
+        i++;
+      }
+      if (rows.length) drawTable({ rows });
+    }
+  </script>
+</body>
+</html>
