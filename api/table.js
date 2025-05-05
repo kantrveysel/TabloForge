@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
       ctx.fillStyle = '#e05d44';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#ffffff';
-      ctx.font = '16px "Noto Sans"';
+      ctx.font = '16px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('Error: ' + message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
 
     // Test yazısı
     try {
-      ctx.font = '40px "Noto Sans"';
+      ctx.font = '40px Arial';
       ctx.fillStyle = '#ff0000';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -134,7 +134,7 @@ module.exports = async (req, res) => {
         const cellBg = isHeader ? headerColor : cellColor;
 
         // Font ve yazı ayarları
-        ctx.font = `${fontSize}px "Noto Sans"`;
+        ctx.font = `${fontSize}px Arial`;
         ctx.fillStyle = textColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -194,7 +194,7 @@ module.exports = async (req, res) => {
     ctx.fillStyle = '#e05d44';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ffffff';
-    ctx.font = '16px "Noto Sans"';
+    ctx.font = '16px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('Error: ' + err.message, canvas.width / 2, canvas.height / 2, canvas.width - 20);
