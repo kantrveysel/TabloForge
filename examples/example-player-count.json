@@ -1,0 +1,7 @@
+{
+  "rows": [
+    [{"text": "Server", "color": "#4c1"}, {"text": "Players", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
+    [{"text": "MyServer", "color": "transparent"}, {"text": "42", "color": "transparent"}, {"text": "Online", "icon": "success", "color": "transparent"}],
+    [{"text": "SkyBlock", "color": "transparent"}, {"text": "15", "color": "transparent"}, {"text": "Online", "icon": "success", "color": "transparent"}]
+  ]
+}
