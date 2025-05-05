@@ -206,5 +206,5 @@ function escapeXml(unsafe) {
     .replace(/</g, '<')
     .replace(/>/g, '>')
     .replace(/"/g, '"')
-    .replace(/'/g, ''');
+    .replace(/'/g, '');
 }
