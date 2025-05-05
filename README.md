@@ -1,26 +1,26 @@
 # 🧩 TabloForge
 
-**TabloForge**, JSON tabanlı verilerle **özelleştirilebilir SVG tablolar** oluşturmanızı sağlayan bir araçtır.  
-Sunucu sahipleri, forumlarda veya sosyal platformlarda **anlık oyuncu sayıları**, **sunucu durumları** veya **etkinlik bilgilerini** şık tablolarla paylaşabilir.
+**TabloForge** is a tool that allows you to create **customizable SVG tables** with JSON-based data.  
+Server owners can share **live player counts**, **server statuses**, or **event details** in stylish tables on forums or social platforms.
 
-Kurulum veya indirme gerekmez – sadece bir URL yeter! 🎉
-TabloForge, JSON tabanlı verilerle **özelleştirilebilir SVG tablolar** oluşturmanızı sağlayan bir araçtır!
+No installation or download required – just a URL is enough! 🎉  
+TabloForge lets you create **customizable SVG tables** with JSON-based data!
 
-Sunucu sahipleri, forumlarda veya sosyal platformlarda anlık oyuncu sayılarını, sunucu durumlarını veya etkinlik bilgilerini **şık ve okunabilir tablolar** şeklinde paylaşabilir.
+Server owners can share live player counts, server statuses, or event details in **stylish and readable tables** on forums or social platforms.
 
-JSON verinizi bir URL’ye yükleyin, TabloForge bağlantısında `json` parametresiyle çağırın – kurulum veya indirme gerekmez! 🎉
+Upload your JSON data to a URL, call it with the `json` parameter in the TabloForge link – no installation or download needed! 🎉
 
-TabloForge, **temalar**, **ikonlar** ve **renk seçenekleriyle** tamamen özelleştirilebilir.
+TabloForge is fully customizable with **themes**, **icons**, and **color options**.
 
 ---
 
-## 🚀 Kullanım Örnekleri
+## 🚀 Usage Examples
 
-### 1. Anlık Oyuncu Sayısı (Dark Tema)
+### 1. Live Player Count (Dark Theme)
 
 ![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true)
 <details>
-<summary>📄 JSON içeriği</summary>
+<summary>📄 JSON Content</summary>
   
 ```json
 {
@@ -41,11 +41,11 @@ TabloForge, **temalar**, **ikonlar** ve **renk seçenekleriyle** tamamen özelle
 
 </details>
 
-### 2. Server Durumu (Light Tema)
+### 2. Server Status (Light Theme)
 
 ![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true)
 <details>
-<summary>📄 JSON içeriği</summary>
+<summary>📄 JSON Content</summary>
   
 ```json
 {
@@ -63,11 +63,12 @@ TabloForge, **temalar**, **ikonlar** ve **renk seçenekleriyle** tamamen özelle
 ```
 
 </details>
-### 3. Etkinlik Duyurusu (Ocean Tema)
+
+### 3. Event Announcement (Ocean Theme)
 
 ![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true)
 <details>
-<summary>📄 JSON içeriği</summary>
+<summary>📄 JSON Content</summary>
   
 ```json
 {
@@ -87,42 +88,43 @@ TabloForge, **temalar**, **ikonlar** ve **renk seçenekleriyle** tamamen özelle
 ```
 
 </details>
+
 ---
 
-## 🧪 Kendi JSON’unuzu Nasıl Hazırlarsınız?
+## 🧪 How to Prepare Your Own JSON?
 
-TabloForge, `rows` dizisi içeren sade bir JSON yapısı ile çalışır:
+TabloForge works with a simple JSON structure containing a `rows` array:
 
 ```json
 {
   "rows": [
     [
-      {"text": "Başlık 1", "color": "#4c1"},
-      {"text": "Başlık 2", "color": "#4c1"}
+      {"text": "Header 1", "color": "#4c1"},
+      {"text": "Header 2", "color": "#4c1"}
     ],
     [
-      {"text": "Veri 1", "icon": "success", "color": "transparent"},
-      {"text": "Veri 2", "icon": "check", "color": "transparent"}
+      {"text": "Data 1", "icon": "success", "color": "transparent"},
+      {"text": "Data 2", "icon": "check", "color": "transparent"}
     ]
   ]
 }
 ```
 
-### JSON Alanları
+### JSON Fields
 
-* `text`: Hücrede gösterilecek metin
-* `icon`: (isteğe bağlı) Hücrede gösterilecek ikon
-* `color`: (isteğe bağlı) Arkaplan rengi (`transparent` olabilir)
+* `text`: The text to display in the cell.
+* `icon`: (optional) The icon to display in the cell.
+* `color`: (optional) Background color (`transparent` is allowed).
 
-### JSON’u Yükleme
+### Uploading Your JSON
 
-Hazırladığınız JSON dosyasını GitHub, Vercel, veya başka bir CDN servisine yükleyin. Örnek:
+Upload your JSON file to GitHub, Vercel, or any other CDN service. Example:
 
 ```
 https://my-website.com/my-table.json
 ```
 
-Bu URL’yi şu şekilde kullanın:
+Use this URL as follows:
 
 ```
 https://tablo-forge.vercel.app/api/table?json=https://my-website.com/my-table.json
@@ -130,37 +132,38 @@ https://tablo-forge.vercel.app/api/table?json=https://my-website.com/my-table.js
 
 ---
 
-## 🎨 Desteklenen İkonlar
+## 🎨 Supported Icons
 
-| İsim        | Görünüm | Açıklama                      |
-| ----------- | ------- | ----------------------------- |
-| `success`   | ✅       | Başarılı / aktif durum        |
-| `error`     | ❌       | Hata / başarısız işlem        |
-| `warning`   | ⚠️      | Uyarı                         |
-| `info`      | ℹ️      | Bilgilendirme                 |
-| `check`     | ✔️      | Onaylı içerik                 |
-| `offline`   | 🔴      | Çevrimdışı                    |
-| `online`    | 🟢      | Çevrimiçi                     |
-| `star`      | ⭐       | Öne çıkan içerik              |
-| `fire`      | 🔥      | Popüler / sıcak               |
-| `clock`     | 🕒      | Zaman bilgisi / etkinlik      |
-| `green dot` | 🟢      | Müsait kullanıcı              |
-| `red dot`   | 🔴      | Meşgul / çevrimdışı kullanıcı |
+| Name        | Appearance | Description                   |
+| ----------- | ---------- | ----------------------------- |
+| `success`   | ✅         | Success / active status       |
+| `error`     | ❌         | Error / failed operation      |
+| `warning`   | ⚠️        | Warning                       |
+| `info`      | ℹ️        | Information                   |
+| `check`     | ✔️        | Approved content              |
+| `offline`   | 🔴        | Offline                       |
+| `online`    | 🟢        | Online                        |
+| `star`      | ⭐        | Featured content              |
+| `fire`      | 🔥        | Popular / hot                 |
+| `clock`     | 🕒        | Time info / event             |
+| `green dot` | 🟢        | Available user                |
+| `red dot`   | 🔴        | Busy / offline user           |
 
-Yeni ikonlar için öneride bulunabilirsiniz!
-
----
-
-## 📌 Notlar
-
-* JSON dosyasının herkes tarafından erişilebilir bir URL’de olması gerekir.
-* `transparent` rengi, hücreyi tema arkaplanıyla uyumlu hale getirir.
-* Daha fazla özellik için [issues](https://github.com/veyselfirat/tabloforge/issues) kısmını kullanabilirsiniz.
+You can suggest new icons!
 
 ---
 
-## 🛠️ Geliştirici
+## 📌 Notes
 
-**Kantrveysel**
-[GitHub](https://github.com/veyselfirat)
-[TabloForge - Vercel Uygulaması](https://tablo-forge.vercel.app)
+* The JSON file must be publicly accessible via a URL.
+* The `transparent` color makes the cell blend with the theme background.
+* For more features, you can use the [issues](https://github.com/veyselfirat/tabloforge/issues) section.
+
+---
+
+## 🛠️ Developer
+
+**Kantrveysel**  
+[GitHub](https://github.com/veyselfirat)  
+
+[TabloForge](https://tablo-forge.vercel.app)
