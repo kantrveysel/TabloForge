@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="image/png" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>TabloForge</title>
   <style>
     body {
@@ -49,9 +51,9 @@
     const radius = parseInt(params.get('_radius')) || 6;
     const shadow = params.get('_shadow') === 'true';
     const gradient = params.get('_gradient') || null;
-    const canvasSize = params.get('_canvas') || '200x100';
 
     // Set canvas size
+    const canvasSize = params.get('_canvas') || '200x100';
     const [canvasWidth, canvasHeight] = canvasSize.split('x').map(Number);
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
