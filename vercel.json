@@ -63,6 +63,19 @@
       ]
     },
     {
+      "source": "/imgs/(.*\\.(png|jpg|jpeg|svg|ico))",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/$1"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        }
+      ]
+    },
+    {
       "source": "/(.*\\.html)",
       "headers": [
         {
