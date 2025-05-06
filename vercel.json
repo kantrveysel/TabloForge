@@ -63,15 +63,6 @@
       ]
     },
     {
-      "source": "/imgs/(.*\\.(png|jpg|jpeg|svg|ico))",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "image/$1"
-        }
-      ]
-    },
-    {
       "source": "/(.*\\.html)",
       "headers": [
         {
