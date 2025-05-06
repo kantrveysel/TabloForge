@@ -1,5 +1,28 @@
 {
-  "name": "TabloForge",
+  "name": "tabloforge",
   "version": "1.0.0",
-  "dependencies": {}
+  "description": "**TabloForge** is a tool that allows you to create **customizable SVG tables** with JSON-based data.  \r Server owners can share **live player counts**, **server statuses**, or **event details** in stylish tables on forums or social platforms.",
+  "main": "server.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kantrveysel/TabloForge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kantrveysel/TabloForge/issues"
+  },
+  "homepage": "https://github.com/kantrveysel/TabloForge#readme",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.5",
+    "tailwindcss": "^4.1.5"
+  }
 }

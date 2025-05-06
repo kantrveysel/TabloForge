@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    h2 {
+      margin-top: 40px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      text-align: center;
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #555;
+    }
+    .card img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Table Test Page</h1>
+
+  <!-- Section 1: General Tests -->
+  <div class="section">
+    <h2>General Tests</h2>
+    <div class="grid">
+      <!-- Test 1: Basic Dark Theme -->
+      <div class="card">
+        <h3>Basic Dark Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=dark&_shadow=true" alt="Basic Dark Theme Table">
+      </div>
+
+      <!-- Test 2: Light Theme with Custom Canvas Size -->
+      <div class="card">
+        <h3>Light Theme (150x100)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=light&_canvas=150x100&_shadow=false" alt="Light Theme 150x100 Table">
+      </div>
+
+      <!-- Test 3: Ocean Theme with Shadow -->
+      <div class="card">
+        <h3>Ocean Theme with Shadow</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=Server,Status&r2=SkyBlock,[success] Online&r3=MyServer,[error] Offline&_theme=ocean&_shadow=true" alt="Ocean Theme with Shadow Table">
+      </div>
+
+      <!-- Test 4: Dark Theme with Custom Colors -->
+      <div class="card">
+        <h3>Dark Theme with Custom Colors</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=dark&_bg=%23002233&_text=%23ffcc00&_shadow=true" alt="Dark Theme with Custom Colors Table">
+      </div>
+
+      <!-- Test 5: JSON Input (Player Count) -->
+      <div class="card">
+        <h3>JSON Input (Player Count, Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?json=http://localhost:3000/examples/example-player-count.json&_theme=dark&_shadow=true" alt="Player Count Dark Table">
+      </div>
+
+      <!-- Test 6: JSON Input (Server Status) -->
+      <div class="card">
+        <h3>JSON Input (Server Status, Light)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?json=http://localhost:3000/examples/example-server-status.json&_theme=light&_shadow=false" alt="Server Status Light Table">
+      </div>
+
+      <!-- Test 7: JSON Input (Event, Ocean) -->
+      <div class="card">
+        <h3>JSON Input (Event, Ocean)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?json=http://localhost:3000/examples/example-event.json&_theme=ocean&_shadow=true" alt="Event Ocean Table">
+      </div>
+
+      <!-- Test 8: Custom Font Size -->
+      <div class="card">
+        <h3>Custom Font Size (30px, Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=dark&_size=30&_shadow=true" alt="Custom Font Size 30px Dark Table">
+      </div>
+
+      <!-- Test 9: No Shadow, Light Theme -->
+      <div class="card">
+        <h3>No Shadow, Light Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=Server,Status&r2=SkyBlock,[success] Online&_theme=light&_shadow=false" alt="No Shadow Light Theme Table">
+      </div>
+
+      <!-- Test 10: Custom Radius -->
+      <div class="card">
+        <h3>Custom Radius (10px, Ocean)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,Alice&r3=2,Bob&_theme=ocean&_radius=10&_shadow=true" alt="Custom Radius 10px Ocean Table">
+      </div>
+
+      <!-- Test 11: Dynamic Size (No Canvas Specified) -->
+      <div class="card">
+        <h3>Dynamic Size (No Canvas, Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score,Rank&r2=1,Alice,95,Top&r3=2,Bob,88,New&_theme=dark&_shadow=true" alt="Dynamic Size Dark Table">
+      </div>
+
+      <!-- Test 12: Custom Cell Color -->
+      <div class="card">
+        <h3>Custom Cell Color (Light)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,Alice&r3=2,Bob&_theme=light&_cell=%23ffddaa&_shadow=true" alt="Custom Cell Color Light Table">
+      </div>
+
+      <!-- Test 13: Multiple Icons -->
+      <div class="card">
+        <h3>Multiple Icons (Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=Status,Info&r2=[success] Online,[star] VIP&r3=[error] Offline,[warning] Maintenance&_theme=dark&_shadow=true" alt="Multiple Icons Dark Table">
+      </div>
+
+      <!-- Test 14: Empty Text -->
+      <div class="card">
+        <h3>Empty Text (Ocean)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,&r3=2,Bob&_theme=ocean&_shadow=true" alt="Empty Text Ocean Table">
+      </div>
+
+      <!-- Test 15: Custom Border Color -->
+      <div class="card">
+        <h3>Custom Border Color (Light)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,Alice&r3=2,Bob&_theme=light&_border=%2300ff00&_shadow=true" alt="Custom Border Color Light Table">
+      </div>
+
+      <!-- Test 16: JSON with Custom Colors -->
+      <div class="card">
+        <h3>JSON with Custom Colors (Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?json=http://localhost:3000/examples/example-server-status.json&_theme=dark&_text=%23ff5555&_shadow=true" alt="JSON with Custom Colors Dark Table">
+      </div>
+
+      <!-- Test 17: Small Canvas -->
+      <div class="card">
+        <h3>Small Canvas (200x100, Ocean)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,Alice&_theme=ocean&_canvas=200x100&_shadow=true" alt="Small Canvas 200x100 Ocean Table">
+      </div>
+
+      <!-- Test 18: Large Font Size -->
+      <div class="card">
+        <h3>Large Font Size (40px, Light)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name&r2=1,Alice&r3=2,Bob&_theme=light&_size=40&_shadow=false" alt="Large Font Size 40px Light Table">
+      </div>
+
+      <!-- Test 19: No Theme Specified -->
+      <div class="card">
+        <h3>No Theme Specified</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_shadow=true" alt="No Theme Specified Table">
+      </div>
+
+      <!-- Test 20: Mixed Content -->
+      <div class="card">
+        <h3>Mixed Content (Dark)</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=Server,Status,Info&r2=MyServer,[success] Online,[star] VIP&r3=SkyBlock,[error] Offline,&_theme=dark&_shadow=true" alt="Mixed Content Dark Table">
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Themes Showcase -->
+  <div class="section">
+    <h2>Themes Showcase</h2>
+    <div class="grid">
+      <!-- Theme 1: Dark -->
+      <div class="card">
+        <h3>Dark Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=dark&_shadow=true" alt="Dark Theme Table">
+      </div>
+
+      <!-- Theme 2: Light -->
+      <div class="card">
+        <h3>Light Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=light&_shadow=true" alt="Light Theme Table">
+      </div>
+
+      <!-- Theme 3: Ocean -->
+      <div class="card">
+        <h3>Ocean Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=ocean&_shadow=true" alt="Ocean Theme Table">
+      </div>
+
+      <!-- Theme 4: Dracula -->
+      <div class="card">
+        <h3>Dracula Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=dracula&_shadow=true" alt="Dracula Theme Table">
+      </div>
+
+      <!-- Theme 5: Solarized Dark -->
+      <div class="card">
+        <h3>Solarized Dark Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=solarized-dark&_shadow=true" alt="Solarized Dark Theme Table">
+      </div>
+
+      <!-- Theme 6: Solarized Light -->
+      <div class="card">
+        <h3>Solarized Light Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=solarized-light&_shadow=true" alt="Solarized Light Theme Table">
+      </div>
+
+      <!-- Theme 7: Gruvbox Dark -->
+      <div class="card">
+        <h3>Gruvbox Dark Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=gruvbox-dark&_shadow=true" alt="Gruvbox Dark Theme Table">
+      </div>
+
+      <!-- Theme 8: Gruvbox Light -->
+      <div class="card">
+        <h3>Gruvbox Light Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=gruvbox-light&_shadow=true" alt="Gruvbox Light Theme Table">
+      </div>
+
+      <!-- Theme 9: Nord -->
+      <div class="card">
+        <h3>Nord Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=nord&_shadow=true" alt="Nord Theme Table">
+      </div>
+
+      <!-- Theme 10: Monokai -->
+      <div class="card">
+        <h3>Monokai Theme</h3>
+        <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_theme=monokai&_shadow=true" alt="Monokai Theme Table">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

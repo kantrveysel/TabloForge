@@ -1,1 +1,4 @@
 server.js
+res-adapter.js
+node_modules/*
+*.local*

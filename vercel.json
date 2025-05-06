@@ -2,7 +2,7 @@
   "version": 2,
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/api/table(.*)",
       "headers": [
         {
           "key": "Content-Type",
@@ -36,11 +36,28 @@
       ]
     },
     {
-      "source": "/pages/main.html",
+      "source": "/(.*\\.html)",
       "headers": [
         {
           "key": "Content-Type",
           "value": "text/html"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
         }
       ]
     }
