@@ -63,7 +63,7 @@
       ]
     },
     {
-      "source": "/imgs/(.*\\.(png|jpg|jpeg|svg|ico))",
+      "source": "/imgs/(.+\\.(png|jpg|jpeg|svg|ico))",
       "headers": [
         {
           "key": "Content-Type",
@@ -76,28 +76,11 @@
       ]
     },
     {
-      "source": "/(.*\\.html)",
+      "source": "/(.+\\.html)",
       "headers": [
         {
           "key": "Content-Type",
           "value": "text/html"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        },
-        {
-          "key": "Expires",
-          "value": "0"
         }
       ]
     }
