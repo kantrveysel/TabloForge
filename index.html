@@ -24,7 +24,7 @@
     .bg-gradient {
       background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
     }
-    /* JSON Pre Fix */
+    /* JSON and URL Pre Fix */
     .json-container pre {
       max-width: 100%;
       word-break: break-all;
@@ -118,9 +118,11 @@
       <p class="mt-4 text-gray-300">
         Use query parameters like <code>r1=ID,Name,Score</code> to create tables without JSON. Example URL:
       </p>
-      <pre class="bg-gray-800 p-4 rounded-lg mt-2 text-gray-300">
+      <div class="json-container mt-2">
+        <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
 https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
-      </pre>
+        </pre>
+      </div>
     </div>
   </section>
 
