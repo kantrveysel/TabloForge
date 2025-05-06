@@ -1,4 +1,4 @@
-# 🧩 TabloForge
+<p align="center"><img src="/imgs/TabloForge_banner.png" alt="Sample Image" style="width:50%; height:auto;" align="center"></img></p>
 
 **TabloForge** is a tool that allows you to create **customizable SVG tables** with JSON-based data.  
 Server owners can share **live player counts**, **server statuses**, or **event details** in stylish tables on forums or social platforms.
@@ -18,7 +18,7 @@ TabloForge is fully customizable with **themes**, **icons**, and **color options
 
 ### 1. Live Player Count (Dark Theme)
 
-![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true)
+![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_theme=dark&_shadow=true)
 <details>
 <summary>📄 JSON Content</summary>
   
@@ -43,7 +43,7 @@ TabloForge is fully customizable with **themes**, **icons**, and **color options
 
 ### 2. Server Status (Light Theme)
 
-![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true)
+![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_theme=light&_shadow=true)
 <details>
 <summary>📄 JSON Content</summary>
   
@@ -66,7 +66,7 @@ TabloForge is fully customizable with **themes**, **icons**, and **color options
 
 ### 3. Event Announcement (Ocean Theme)
 
-![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true)
+![image](https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_theme=ocean&_size=18&_shadow=true)
 <details>
 <summary>📄 JSON Content</summary>
   
@@ -90,6 +90,32 @@ TabloForge is fully customizable with **themes**, **icons**, and **color options
 </details>
 
 ---
+
+### 4. API Use Cases
+#### Cat Facts API Usage
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://catfact.ninja/fact"></img>
+---
+#### Random Dog Photo Usage
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://dog.ceo/api/breeds/image/random&_theme=light"></img>
+---
+#### Random Quotable Usage
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=http://api.quotable.io/random&_theme=nord"></img>
+---
+#### Timeapi Useage
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://timeapi.io/api/Time/current/zone?timeZone=Europe/Istanbul&_theme=dracula"></img>
+
+
+<details>
+<summary>📄 Contents</summary>
+  
+  ```
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://catfact.ninja/fact"></img>
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://dog.ceo/api/breeds/image/random&_theme=light"></img>
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=http://api.quotable.io/random&_theme=nord"></img>
+<img src="https://tablo-forge.vercel.app/api/fromapi?api=https://timeapi.io/api/Time/current/zone?timeZone=Europe/Istanbul&_theme=dracula"></img>
+```
+</details>
+
 
 ## 🧪 How to Prepare Your Own JSON?
 
