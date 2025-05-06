@@ -41,6 +41,3 @@ out/
 # Diğer geçici dosyalar
 tmp/
 temp/
-
-# server file
-server.js
