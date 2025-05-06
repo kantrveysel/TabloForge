@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TabloForge - Create Custom SVG Tables</title>
+  <title>TabloForge - Create Dynamic SVG Tables</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Custom Animations */
@@ -40,7 +40,7 @@
   <header class="text-center py-16">
     <h1 class="text-5xl md:text-7xl font-bold animate-fadeIn">🧩 TabloForge</h1>
     <p class="mt-4 text-xl md:text-2xl animate-fadeIn delay-200">
-      Create <span class="text-green-400">custom SVG tables</span> with JSON data – no installation needed!
+      Create <span class="text-green-400">dynamic SVG tables</span> with real-time JSON data – no installation needed!
     </p>
     <a href="#usage" class="mt-6 inline-block px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 animate-pulse">
       Get Started
@@ -54,9 +54,12 @@
     <!-- Example 1: Live Player Count -->
     <div class="mb-12 animate-fadeIn delay-300">
       <h3 class="text-2xl font-semibold mb-4">1. Live Player Count (Dark Theme)</h3>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Player Count" class="mx-auto rounded-lg hover-scale">
+      <p class="text-gray-300 mb-4">
+        This table fetches real-time player counts from a dynamic endpoint:
+      </p>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://api.example.com/server-stats&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Player Count" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
         <div class="json-container mt-2">
           <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
 {
@@ -74,9 +77,12 @@
     <!-- Example 2: Server Status -->
     <div class="mb-12 animate-fadeIn delay-400">
       <h3 class="text-2xl font-semibold mb-4">2. Server Status (Light Theme)</h3>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true" alt="Server Status" class="mx-auto rounded-lg hover-scale">
+      <p class="text-gray-300 mb-4">
+        This table fetches real-time server status from a dynamic endpoint:
+      </p>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://api.example.com/user-status&_canvas=400x200&_theme=light&_size=18&_shadow=true" alt="Server Status" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
         <div class="json-container mt-2">
           <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
 {
@@ -94,9 +100,12 @@
     <!-- Example 3: Event Announcement -->
     <div class="mb-12 animate-fadeIn delay-500">
       <h3 class="text-2xl font-semibold mb-4">3. Event Announcement (Ocean Theme)</h3>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" alt="Event Announcement" class="mx-auto rounded-lg hover-scale">
+      <p class="text-gray-300 mb-4">
+        This table fetches upcoming events from a dynamic endpoint:
+      </p>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://api.example.com/events&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" alt="Event Announcement" class="mx-auto rounded-lg hover-scale">
       <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 JSON Content</summary>
+        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
         <div class="json-container mt-2">
           <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
 {
@@ -130,11 +139,11 @@ https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob
   <section class="max-w-5xl mx-auto py-16 px-4">
     <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🧪 How to Use TabloForge?</h2>
     <div class="space-y-6">
-      <!-- Step 1: Prepare Your JSON -->
+      <!-- Step 1: Set Up a Dynamic Endpoint -->
       <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-600">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">1. Prepare Your JSON</summary>
+        <summary class="text-2xl font-semibold mb-2 cursor-pointer">1. Set Up a Dynamic Endpoint</summary>
         <p class="mt-4 text-gray-300">
-          Create a JSON file with a <code>rows</code> array containing your table data. Example:
+          Create an API endpoint that returns real-time JSON data in the required format. Example response:
         </p>
         <div class="json-container mt-2">
           <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
@@ -146,26 +155,32 @@ https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob
 }
           </pre>
         </div>
+        <p class="mt-4 text-gray-300">
+          Host this endpoint on a public URL (e.g., <code>https://api.example.com/my-data</code>).
+        </p>
       </details>
 
-      <!-- Step 2: Upload and Use -->
+      <!-- Step 2: Use the Endpoint with TabloForge -->
       <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">2. Upload and Use</summary>
+        <summary class="text-2xl font-semibold mb-2 cursor-pointer">2. Use the Endpoint with TabloForge</summary>
         <p class="mt-4 text-gray-300">
-          Upload your JSON to a public URL (e.g., GitHub, Vercel), then use it in the TabloForge URL:
+          Pass your endpoint URL to TabloForge using the <code>json</code> parameter. Example:
         </p>
         <div class="json-container mt-2">
           <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
-https://tablo-forge.vercel.app/api/table?json=https://your-site.com/my-table.json&_canvas=600x200&_theme=dark
+https://tablo-forge.vercel.app/api/table?json=https://api.example.com/my-data&_canvas=600x200&_theme=dark
           </pre>
         </div>
+        <p class="mt-4 text-gray-300">
+          TabloForge will fetch the data in real-time and render your table dynamically.
+        </p>
       </details>
 
       <!-- Step 3: Use Query Parameters (Non-JSON) -->
       <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-800">
         <summary class="text-2xl font-semibold mb-2 cursor-pointer">3. Use Query Parameters</summary>
         <p class="mt-4 text-gray-300">
-          Create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
+          Alternatively, create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
         </p>
         <div class="json-container mt-2">
           <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
