@@ -1,67 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TabloForge - Create Dynamic SVG Tables</title>
+  <title>TabloForge - Dynamic SVG Table Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Favicon Setup -->
+  <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="imgs/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#2d89ef">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- SEO ve Open Graph Meta Etiketleri -->
+  <meta name="description" content="TabloForge - Create stunning, real-time SVG tables from JSON data with customizable themes and responsive design. No installation required!">
+  <meta name="keywords" content="TabloForge, SVG tables, dynamic tables, JSON tables, real-time data, responsive design">
+  <meta name="author" content="Kantrveysel">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="TabloForge - Dynamic SVG Table Generator">
+  <meta property="og:description" content="Transform your JSON data into beautiful, real-time SVG tables with TabloForge. Customizable and responsive design, no installation needed!">
+  <meta property="og:image" content="https://tablo-forge.vercel.app/imgs/TabloForge_banner.png">
+  <meta property="og:url" content="https://tablo-forge.vercel.app">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TabloForge - Dynamic SVG Table Generator">
+  <meta name="twitter:description" content="Create dynamic SVG tables with real-time JSON data using TabloForge.">
+  <meta name="twitter:image" content="https://tablo-forge.vercel.app/imgs/TabloForge_banner.png">
+
   <style>
-    /* Custom Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    :root {
+      --primary: #4ade80;
+      --secondary: #38bdf8;
     }
-    .animate-fadeIn {
-      animation: fadeIn 1s ease-out forwards;
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
     }
-    .hover-scale {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .gradient-text {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .hover-scale:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    .json-container{
+      overflow: auto;
+
     }
-    .bg-gradient {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+
+    .glass-effect {
+      background: rgba(23, 23, 23, 0.25);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    /* JSON and URL Pre Fix */
-    .json-container pre {
-      max-width: 100%;
-      word-break: break-all;
-      white-space: pre-wrap;
+
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
     }
-    .json-container {
-      overflow-x: auto;
+
+    .tab-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
-<body class="bg-gradient text-white min-h-screen font-sans">
-  <!-- Header Section -->
-  <header class="text-center py-16">
-    <h1 class="text-5xl md:text-7xl font-bold animate-fadeIn">🧩 TabloForge</h1>
-    <p class="mt-4 text-xl md:text-2xl animate-fadeIn delay-200">
-      Create <span class="text-green-400">dynamic SVG tables</span> with real-time JSON data – no installation needed!
-    </p>
-    <a href="#usage" class="mt-6 inline-block px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 animate-pulse">
-      Get Started
-    </a>
-  </header>
+<body class="bg-gray-900 text-gray-100 min-h-screen font-sans antialiased">
+  <!-- Navigation -->
+  <nav class="glass-effect fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex-shrink-0 flex items-center">
+          <img src="imgs/TabloForge.png" class="h-8 w-8 mr-2" alt="Logo">
+          <span class="text-xl font-bold gradient-text">TabloForge</span>
+        </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="#features" class="hover:text-green-400 transition-colors">Features</a>
+          <a href="#examples" class="hover:text-green-400 transition-colors">Examples</a>
+          <a href="#docs" class="hover:text-green-400 transition-colors">Documentation</a>
+          <a href="https://github.com/kantrveysel/TabloForge" target="_blank" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-  <!-- Usage Examples Section -->
-  <section id="usage" class="max-w-5xl mx-auto py-16 px-4">
-    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🚀 Usage Examples</h2>
-
-    <!-- Example 1: Live Player Count -->
-    <div class="mb-12 animate-fadeIn delay-300">
-      <h3 class="text-2xl font-semibold mb-4">1. Live Player Count (Dark Theme)</h3>
-      <p class="text-gray-300 mb-4">
-        This table fetches real-time player counts from a dynamic endpoint:
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 opacity-75"></div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="animate-float">
+        <img src="imgs/TabloForge_banner.png" alt="Banner" class="mx-auto mb-8 w-full max-w-2xl">
+      </div>
+      <h1 class="text-5xl md:text-6xl font-bold mb-6">
+        Create <span class="gradient-text">Dynamic Tables</span> in Seconds
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+        Transform your JSON data into beautiful, real-time SVG tables with customizable themes and responsive design.
       </p>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Player Count" class="mx-auto rounded-lg hover-scale">
-      <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
+      <div class="flex justify-center space-x-4">
+        <a href="https://github.com/kantrveysel/TabloForge" 
+           class="px-8 py-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all transform hover:scale-105">
+          Get Started
+        </a>
+        <a href="#examples" 
+           class="px-8 py-4 glass-effect border border-gray-700 rounded-xl hover:border-green-400 transition-all">
+          View Examples
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabs Navigation -->
+  <div class="sticky top-16 glass-effect z-40">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex overflow-x-auto scrollbar-hide">
+        <button data-tab="examples" class="tab-btn px-6 py-4 text-lg font-medium">Examples</button>
+        <button data-tab="theme" class="tab-btn px-6 py-4 text-lg font-medium">Themes</button>
+        <button data-tab="icons" class="tab-btn px-6 py-4 text-lg font-medium">Supported Icons</button>
+        <button data-tab="documentation" class="tab-btn px-6 py-4 text-lg font-medium">Documentation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Contents -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <!-- Examples Tab -->
+    <div id="examples" class="tab-content active animate-on-scroll">
+      <h2 class="text-4xl font-bold text-center mb-12 gradient-text">🚀 Usage Examples</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Example 1: Live Player Count -->
+        <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+          <div class="flex items-center mb-4">
+            <div class="h-12 w-12 bg-green-400/10 rounded-lg flex items-center justify-center mr-4">
+              <i class="fas fa-users text-green-400 text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold">Live Player Count</h3>
+          </div>
+          <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=600x200&_theme=dark&_size=18&_shadow=true" 
+               class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Live Player Count">
+          <details class="mt-4 text-gray-300">
+            <summary class="cursor-pointer">📄 Expected JSON Response</summary>
+            <div class="json-container mt-2">
+              <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 {
   "rows": [
     [{"text": "Server", "color": "#4c1"}, {"text": "Players", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
@@ -69,22 +163,25 @@
     [{"text": "SkyBlock", "color": "transparent"}, {"text": "15", "color": "transparent"}, {"text": "Online", "icon": "success", "color": "transparent"}]
   ]
 }
-          </pre>
+              </pre>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
 
-    <!-- Example 2: Server Status -->
-    <div class="mb-12 animate-fadeIn delay-400">
-      <h3 class="text-2xl font-semibold mb-4">2. Server Status (Light Theme)</h3>
-      <p class="text-gray-300 mb-4">
-        This table fetches real-time server status from a dynamic endpoint:
-      </p>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true" alt="Server Status" class="mx-auto rounded-lg hover-scale">
-      <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
+        <!-- Example 2: Server Status -->
+        <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+          <div class="flex items-center mb-4">
+            <div class="h-12 w-12 bg-blue-400/10 rounded-lg flex items-center justify-center mr-4">
+              <i class="fas fa-server text-blue-400 text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold">Server Status</h3>
+          </div>
+          <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-server-status.json&_canvas=400x200&_theme=light&_size=18&_shadow=true" 
+               class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Server Status">
+          <details class="mt-4 text-gray-300">
+            <summary class="cursor-pointer">📄 Expected JSON Response</summary>
+            <div class="json-container mt-2">
+              <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 {
   "rows": [
     [{"text": "Name", "color": "#4c1"}, {"text": "Status", "color": "#4c1"}],
@@ -92,22 +189,25 @@
     [{"text": "Bob", "icon": "red dot", "color": "transparent"}, {"text": "Offline", "icon": "offline", "color": "transparent"}]
   ]
 }
-          </pre>
+              </pre>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
 
-    <!-- Example 3: Event Announcement -->
-    <div class="mb-12 animate-fadeIn delay-500">
-      <h3 class="text-2xl font-semibold mb-4">3. Event Announcement (Ocean Theme)</h3>
-      <p class="text-gray-300 mb-4">
-        This table fetches upcoming events from a dynamic endpoint:
-      </p>
-      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" alt="Event Announcement" class="mx-auto rounded-lg hover-scale">
-      <details class="mt-4 text-gray-300">
-        <summary class="cursor-pointer">📄 Expected JSON Response</summary>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
+        <!-- Example 3: Event Announcement -->
+        <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+          <div class="flex items-center mb-4">
+            <div class="h-12 w-12 bg-indigo-400/10 rounded-lg flex items-center justify-center mr-4">
+              <i class="fas fa-calendar-alt text-indigo-400 text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold">Event Announcement</h3>
+          </div>
+          <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-event.json&_canvas=600x200&_theme=ocean&_size=18&_shadow=true" 
+               class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Event Announcement">
+          <details class="mt-4 text-gray-300">
+            <summary class="cursor-pointer">📄 Expected JSON Response</summary>
+            <div class="json-container mt-2">
+              <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 {
   "rows": [
     [{"text": "Event", "color": "#60a5fa"}, {"text": "Date", "color": "#60a5fa"}, {"text": "Status", "color": "#60a5fa"}],
@@ -115,168 +215,368 @@
     [{"text": "Build Contest", "color": "transparent"}, {"text": "2025-05-15", "color": "transparent"}, {"text": "Planned", "icon": "star", "color": "transparent"}]
   ]
 }
-          </pre>
+              </pre>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
 
-    <!-- Example 4: Non-JSON Table (Query Parameters) -->
-    <div class="mb-12 animate-fadeIn delay-600">
-      <h3 class="text-2xl font-semibold mb-4">4. Simple Table (Query Parameters)</h3>
-      <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark&_size=18&_shadow=true" alt="Query Parameter Table" class="mx-auto rounded-lg hover-scale">
-      <p class="mt-4 text-gray-300">
-        Use query parameters like <code>r1=ID,Name,Score</code> to create tables without JSON. Example URL:
-      </p>
-      <div class="json-container mt-2">
-        <pre class="bg-gray-800 p-4 rounded-lg text-gray-300">
+        <!-- Example 4: Non-JSON Table -->
+        <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+          <div class="flex items-center mb-4">
+            <div class="h-12 w-12 bg-purple-400/10 rounded-lg flex items-center justify-center mr-4">
+              <i class="fas fa-table text-purple-400 text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold">Simple Table (Query Params)</h3>
+          </div>
+          <img src="https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark&_size=18&_shadow=true" 
+               class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Query Parameter Table">
+          <p class="mt-4 text-gray-300">
+            Use query parameters like <code>r1=ID,Name,Score</code> to create tables without JSON. Example URL:
+          </p>
+          <div class="json-container mt-2">
+            <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
-        </pre>
+            </pre>
+          </div>
+        </div>
       </div>
     </div>
-  </section>
 
-  <!-- How to Use Section -->
-  <section class="max-w-5xl mx-auto py-16 px-4">
-    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🧪 How to Use TabloForge?</h2>
-    <div class="space-y-6">
-      <!-- Step 1: Set Up a Dynamic Endpoint -->
-      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-600">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">1. Set Up a Dynamic Endpoint</summary>
-        <p class="mt-4 text-gray-300">
-          Create an API endpoint that returns real-time JSON data in the required format. Example response:
-        </p>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
+    <!-- Documentation Tab -->
+    <div id="documentation" class="tab-content animate-on-scroll">
+      <h2 class="text-4xl font-bold text-center mb-12 gradient-text">📚 Documentation</h2>
+      <div class="space-y-8">
+        <!-- Step 1 -->
+        <div class="glass-effect p-8 rounded-2xl">
+          <div class="flex items-center mb-6">
+            <div class="flex items-center justify-center w-12 h-12 bg-blue-400/10 rounded-lg mr-4">
+              <span class="text-2xl">1</span>
+            </div>
+            <h3 class="text-2xl font-semibold">Set Up Your Endpoint</h3>
+          </div>
+          <p class="text-gray-300 mb-4">
+            Create an API endpoint that returns real-time JSON data in the required format. Example response:
+          </p>
+          <div class="json-container mt-2">
+            <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 {
   "rows": [
     [{"text": "Header 1", "color": "#4c1"}, {"text": "Header 2", "color": "#4c1"}],
     [{"text": "Data 1", "icon": "success", "color": "transparent"}, {"text": "Data 2", "icon": "check", "color": "transparent"}]
   ]
 }
-          </pre>
+            </pre>
+          </div>
+          <p class="mt-4 text-gray-300">
+            Host this endpoint on a public URL (e.g., <code>https://api.example.com/my-data</code>).
+          </p>
         </div>
-        <p class="mt-4 text-gray-300">
-          Host this endpoint on a public URL (e.g., <code>https://api.example.com/my-data</code>).
-        </p>
-      </details>
 
-      <!-- Step 2: Use the Endpoint with TabloForge -->
-      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-700">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">2. Use the Endpoint with TabloForge</summary>
-        <p class="mt-4 text-gray-300">
-          Pass your endpoint URL to TabloForge using the <code>json</code> parameter. Example:
-        </p>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
+        <!-- Step 2 -->
+        <div class="glass-effect p-8 rounded-2xl">
+          <div class="flex items-center mb-6">
+            <div class="flex items-center justify-center w-12 h-12 bg-blue-400/10 rounded-lg mr-4">
+              <span class="text-2xl">2</span>
+            </div>
+            <h3 class="text-2xl font-semibold">Use the Endpoint with TabloForge</h3>
+          </div>
+          <p class="text-gray-300 mb-4">
+            Pass your endpoint URL to TabloForge using the <code>json</code> parameter. Example:
+          </p>
+          <div class="json-container mt-2">
+            <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 https://tablo-forge.vercel.app/api/table?json=https://api.example.com/my-data&_canvas=600x200&_theme=dark
-          </pre>
+            </pre>
+          </div>
+          <p class="mt-4 text-gray-300">
+            TabloForge will fetch the data in real-time and render your table dynamically.
+          </p>
         </div>
-        <p class="mt-4 text-gray-300">
-          TabloForge will fetch the data in real-time and render your table dynamically.
-        </p>
-      </details>
 
-      <!-- Step 3: Use Query Parameters (Non-JSON) -->
-      <details class="bg-gray-800 p-6 rounded-lg animate-fadeIn delay-800">
-        <summary class="text-2xl font-semibold mb-2 cursor-pointer">3. Use Query Parameters</summary>
-        <p class="mt-4 text-gray-300">
-          Alternatively, create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
-        </p>
-        <div class="json-container mt-2">
-          <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
+        <!-- Step 3 -->
+        <div class="glass-effect p-8 rounded-2xl">
+          <div class="flex items-center mb-6">
+            <div class="flex items-center justify-center w-12 h-12 bg-blue-400/10 rounded-lg mr-4">
+              <span class="text-2xl">3</span>
+            </div>
+            <h3 class="text-2xl font-semibold">Use Query Parameters</h3>
+          </div>
+          <p class="text-gray-300 mb-4">
+            Alternatively, create a table directly with query parameters like <code>r1=ID,Name,Score</code>. Example:
+          </p>
+          <div class="json-container mt-2">
+            <pre class="bg-gray-900 p-4 rounded-lg text-gray-300">
 https://tablo-forge.vercel.app/api/table?r1=ID,Name,Score&r2=1,Alice,95&r3=2,Bob,88&_canvas=600x200&_theme=dark
-          </pre>
+            </pre>
+          </div>
+          <p class="mt-4 text-gray-300">
+            This method allows quick table creation without a JSON endpoint.
+          </p>
         </div>
-      </details>
+      </div>
     </div>
-  </section>
 
-  <!-- Supported Icons Section -->
-  <section class="max-w-5xl mx-auto py-16 px-4">
-    <h2 class="text-4xl font-bold text-center mb-12 animate-fadeIn">🎨 Supported Icons</h2>
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-gray-300">
-        <thead>
-          <tr class="bg-gray-800">
-            <th class="p-4">Name</th>
-            <th class="p-4">Appearance</th>
-            <th class="p-4">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>success</code></td>
-            <td class="p-4">✅</td>
-            <td class="p-4">Success / active status</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>error</code></td>
-            <td class="p-4">❌</td>
-            <td class="p-4">Error / failed operation</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>warning</code></td>
-            <td class="p-4">⚠️</td>
-            <td class="p-4">Warning</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>info</code></td>
-            <td class="p-4">ℹ️</td>
-            <td class="p-4">Information</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>check</code></td>
-            <td class="p-4">✔️</td>
-            <td class="p-4">Approved content</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>offline</code></td>
-            <td class="p-4">🔴</td>
-            <td class="p-4">Offline</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>online</code></td>
-            <td class="p-4">🟢</td>
-            <td class="p-4">Online</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>star</code></td>
-            <td class="p-4">⭐</td>
-            <td class="p-4">Featured content</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>fire</code></td>
-            <td class="p-4">🔥</td>
-            <td class="p-4">Popular / hot</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>clock</code></td>
-            <td class="p-4">🕒</td>
-            <td class="p-4">Time info / event</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>green dot</code></td>
-            <td class="p-4">🟢</td>
-            <td class="p-4">Available user</td>
-          </tr>
-          <tr class="border-b border-gray-700">
-            <td class="p-4"><code>red dot</code></td>
-            <td class="p-4">🔴</td>
-            <td class="p-4">Busy / offline user</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Theme Tab --><!-- Theme Tab -->
+<div id="theme" class="tab-content animate-on-scroll">
+  <h2 class="text-4xl font-bold text-center mb-12 gradient-text">🌟 Themes</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Dark Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-blue-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-moon text-blue-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Dark Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=dark&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Dark Theme Table">
+      <p class="text-gray-300">A sleek, dark theme for a modern look with high contrast.</p>
     </div>
-    <p class="mt-4 text-gray-300 text-center">Suggest new icons on <a href="https://github.com/veyselfirat/tabloforge/issues" class="text-green-400 hover:underline">GitHub</a>!</p>
-  </section>
 
-  <!-- Footer Section -->
-  <footer class="text-center py-8 bg-gray-900">
-    <p class="text-gray-400">
-      Developed by <strong>Kantrveysel</strong> •
-      <a href="https://github.com/veyselfirat" class="text-green-400 hover:underline">GitHub</a> •
-      <a href="https://tablo-forge.vercel.app" class="text-green-400 hover:underline">TabloForge</a>
-    </p>
+    <!-- Light Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-sun text-yellow-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Light Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=light&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Light Theme Table">
+      <p class="text-gray-300">A clean, bright theme for a minimalistic design.</p>
+    </div>
+
+    <!-- Ocean Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-blue-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-water text-blue-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Ocean Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=ocean&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Ocean Theme Table">
+      <p class="text-gray-300">Cool blue tones inspired by the ocean.</p>
+    </div>
+
+    <!-- Dracula Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-purple-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-ghost text-purple-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Dracula Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=dracula&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Dracula Theme Table">
+      <p class="text-gray-300">A vibrant, dark theme with a spooky vibe.</p>
+    </div>
+
+    <!-- Solarized-Dark Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-indigo-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-star text-indigo-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Solarized-Dark Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=solarized-dark&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Solarized-Dark Theme Table">
+      <p class="text-gray-300">A dark, balanced theme with muted tones.</p>
+    </div>
+
+    <!-- Solarized-Light Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-star text-yellow-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Solarized-Light Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=solarized-light&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Solarized-Light Theme Table">
+      <p class="text-gray-300">A light, balanced theme with soft colors.</p>
+    </div>
+
+    <!-- Gruvbox-Light Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-orange-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-leaf text-orange-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Gruvbox-Light Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=gruvbox-light&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Gruvbox-Light Theme Table">
+      <p class="text-gray-300">A warm, retro light theme with earthy tones.</p>
+    </div>
+
+    <!-- Gruvbox-Dark Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-orange-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-leaf text-orange-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Gruvbox-Dark Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=gruvbox-dark&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Gruvbox-Dark Theme Table">
+      <p class="text-gray-300">A cozy, retro dark theme with earthy tones.</p>
+    </div>
+
+    <!-- Nord Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-blue-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-snowflake text-blue-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Nord Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=nord&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Nord Theme Table">
+      <p class="text-gray-300">A frosty, minimal theme with arctic colors.</p>
+    </div>
+
+    <!-- Monokai Theme -->
+    <div class="glass-effect p-6 rounded-2xl animate-on-scroll">
+      <div class="flex items-center mb-4">
+        <div class="h-12 w-12 bg-pink-400/10 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-code text-pink-400 text-xl"></i>
+        </div>
+        <h3 class="text-2xl font-semibold">Monokai Theme</h3>
+      </div>
+      <img src="https://tablo-forge.vercel.app/api/table?json=https://tablo-forge.vercel.app/examples/example-player-count.json&_canvas=200x80&_theme=monokai&_size=10" 
+           class="w-full rounded-xl mb-4 hover:scale-[1.02] transition-transform" alt="Monokai Theme Table">
+      <p class="text-gray-300">A coder-friendly theme with bold, vibrant colors.</p>
+    </div>
+  </div>
+</div>
+    <!-- Icons Tab -->
+    <div id="icons" class="tab-content animate-on-scroll">
+      <h2 class="text-4xl font-bold text-center mb-12 gradient-text">🎨 Supported Icons</h2>
+      <div class="overflow-x-auto rounded-2xl glass-effect">
+        <table class="w-full">
+          <thead class="bg-gray-800">
+            <tr>
+              <th class="p-4 text-left">Icon Name</th>
+              <th class="p-4 text-left">Appearance</th>
+              <th class="p-4 text-left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>success</code></td>
+              <td class="p-4">✅</td>
+              <td class="p-4 text-gray-300">Success / active status</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>error</code></td>
+              <td class="p-4">❌</td>
+              <td class="p-4 text-gray-300">Error / failed operation</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>warning</code></td>
+              <td class="p-4">⚠️</td>
+              <td class="p-4 text-gray-300">Warning</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>info</code></td>
+              <td class="p-4">ℹ️</td>
+              <td class="p-4 text-gray-300">Information</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>check</code></td>
+              <td class="p-4">✔️</td>
+              <td class="p-4 text-gray-300">Approved content</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>offline</code></td>
+              <td class="p-4">🔴</td>
+              <td class="p-4 text-gray-300">Offline</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>online</code></td>
+              <td class="p-4">🟢</td>
+              <td class="p-4 text-gray-300">Online</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>star</code></td>
+              <td class="p-4">⭐</td>
+              <td class="p-4 text-gray-300">Featured content</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>fire</code></td>
+              <td class="p-4">🔥</td>
+              <td class="p-4 text-gray-300">Popular / hot</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>clock</code></td>
+              <td class="p-4">🕒</td>
+              <td class="p-4 text-gray-300">Time info / event</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>green dot</code></td>
+              <td class="p-4">🟢</td>
+              <td class="p-4 text-gray-300">Available user</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4"><code>red dot</code></td>
+              <td class="p-4">🔴</td>
+              <td class="p-4 text-gray-300">Busy / offline user</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-8 text-gray-300 text-center">
+        Suggest new icons on <a href="https://github.com/kantrveysel/TabloForge/issues" class="text-green-400 hover:underline">GitHub</a>!
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="glass-effect mt-20">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <div class="text-center text-gray-400">
+        <p>© 2025 TabloForge. All rights reserved. Developed by <a href="https://github.com/kantrveysel" class="text-green-400 hover:underline">Kantrveysel</a>.</p>
+      </div>
+    </div>
   </footer>
-</body>
-</html>
+
+  <script>
+    // Tab Functionality
+    const tabs = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fadeIn');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+  </script>
